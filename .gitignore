@@ -1,0 +1,7 @@
+node_modules
+*.log
+*.error
+# 应用编译时自动生成的目录
+dist
+.doer
+.doer-prod

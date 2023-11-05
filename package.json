@@ -23,9 +23,7 @@
     "@doerjs/cli": "0.1.0",
     "@doerjs/eslint-config": "0.0.6",
     "@doerjs/prettier-config": "0.0.6",
-    
     "@doerjs/plugin-less": "0.0.6",
-    
     "husky": "^7.0.4",
     "lint-staged": "^12.1.5"
   }
