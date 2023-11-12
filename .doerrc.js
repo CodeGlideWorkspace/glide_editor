@@ -1,6 +1,8 @@
 module.exports = {
   // 设置别名
-  alias: {},
+  alias: {
+    '@': 'src',
+  },
   // doer默认会排除所有node_modules编译
   // 如果需要编译部分包，请在这里添加额外的需要编译的包名
   extraBabelCompileNodeModules: [],
@@ -12,11 +14,7 @@ module.exports = {
   // 开启BrowserRouter模式
   browserHistory: false,
 
-  plugins: [
-  
-  '@doerjs/plugin-less',
-  
-  ],
+  plugins: ['@doerjs/plugin-less'],
 
   // 自定义<Suspense fallback={<Loading />}> loading组件
   // 布局加载和页面加载公用一个loading

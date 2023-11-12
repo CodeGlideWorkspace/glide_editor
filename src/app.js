@@ -1,21 +1,11 @@
 /**
  * 本文件用于注册全局回调勾子，如果你不需要这些勾子函数，可以删除本文件
  */
+import React from 'react'
+import 'remote:glide_components/style'
+import ConfigProvider from 'remote:glide_components/ConfigProvider'
 
 import './app.css'
-
-/**
- * 获取应用的远程地址
- * 可以通过静态注册写死各个应用的远程资源地址
- * 也可以通过服务端动态获取应用的远程资源地址
- * @return <Object> 应用的远程地址注册表
- */
-export function remotes() {
-  return {
-    glide_components: 'http://localhost:3001',
-    glide_public_components: 'http://localhost:3002',
-  }
-}
 
 /**
  * 应用渲染前的回调函数，可以控制应用的渲染
@@ -41,7 +31,9 @@ export function remotes() {
 export function render(oldRender) {
   // 注册渲染回调函数，在需要渲染时，一定要调用这个render
   // 否则应用无法渲染出来
-  oldRender()
+  oldRender((children) => {
+    return <ConfigProvider>{children}</ConfigProvider>
+  })
 }
 
 /**
