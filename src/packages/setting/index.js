@@ -1,3 +1,4 @@
-import Panel from './Panel'
+import ConfigPanel from './configPanel/ConfigPanel'
+import SettingProvider, { SettingContext } from './SettingProvider'
 
-export { Panel }
+export { ConfigPanel, SettingProvider, SettingContext }

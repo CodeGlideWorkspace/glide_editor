@@ -3,7 +3,7 @@
  */
 import React from 'react'
 import 'remote:glide_components/style'
-import ConfigProvider from 'remote:glide_components/ConfigProvider'
+import { ConfigProvider } from 'remote:glide_components/ConfigProvider'
 
 import './app.css'
 
