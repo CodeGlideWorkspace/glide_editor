@@ -1,15 +1,22 @@
 import { isArray } from 'remote:glide_components/utils'
 
-function useConfigPanel({ configDefinition = [] }) {
-  const itemDefinitions = configDefinition.filter((item) => {
+function useConfigPanel({ configDefinitions = [] }) {
+  const groupDefinitions = []
+
+  const itemDefinitions = configDefinitions.filter((item) => {
     return !isArray(item.children)
   })
+  if (itemDefinitions.length) {
+    groupDefinitions.push({ label: '基础设置', name: '$_default', children: itemDefinitions })
+  }
 
-  const groupDefinitions = configDefinition.filter((item) => {
-    return isArray(item.children)
+  configDefinitions.forEach((item) => {
+    if (isArray(item.children)) {
+      groupDefinitions.push(item)
+    }
   })
 
-  return { groupDefinitions, itemDefinitions }
+  return { groupDefinitions }
 }
 
 export default useConfigPanel

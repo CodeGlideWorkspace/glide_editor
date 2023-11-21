@@ -1,5 +1,4 @@
 import React from 'react'
-import { Remote } from 'remote:glide_components/Remote'
 
 export const SettingContext = React.createContext({
   /**
@@ -24,12 +23,7 @@ function SettingProvider({ children }) {
     },
   }
 
-  return (
-    <SettingContext.Provider value={{ itemPathMap }}>
-      <Remote path={itemPathMap.input.componentPath} />
-      {children}
-    </SettingContext.Provider>
-  )
+  return <SettingContext.Provider value={{ itemPathMap }}>{children}</SettingContext.Provider>
 }
 
 export default SettingProvider
