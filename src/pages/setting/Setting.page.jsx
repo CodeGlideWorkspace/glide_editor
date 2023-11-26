@@ -1,6 +1,6 @@
 import React from 'react'
 import { ConfigPanel, SettingProvider } from '@/packages/setting'
-import { Card } from 'remote:glide_components/Card'
+import { Module } from 'remote:glide_components/Module'
 
 import styles from './Setting.module.less'
 
@@ -12,8 +12,8 @@ const configDefinitions = [
     description: '这里是长长的描述信息啊啊',
     tip: '提示信息',
     defaultValue: '',
-    validates: [],
-    direction: 'horizontal',
+    validators: [],
+    layout: 'horizontal',
     props: {},
   },
   {
@@ -23,13 +23,31 @@ const configDefinitions = [
       {
         label: '文本域',
         name: 'text',
-        node: 'textarea',
+        node: 'input',
         description: '这里是长长的描述信息啊啊',
         tip: '提示信息',
         defaultValue: '',
-        validates: [],
-        direction: 'vertical',
-        props: {},
+        validators: [
+          (value, form) => {
+            console.log(form.getValues(), '...')
+            return '校验失败'
+          },
+        ],
+        /**
+         * 检测是否显示
+         */
+        visible(value, form) {
+          const text3 = form.getValue('text3')
+          if (text3 === '1') {
+            return false
+          }
+        },
+        layout: 'vertical',
+        required: true,
+        dependencies: ['text3'],
+        props: {
+          type: 'textarea',
+        },
       },
       {
         label: '数值输入框',
@@ -38,8 +56,8 @@ const configDefinitions = [
         description: '这里是长长的描述信息啊啊',
         tip: '提示信息',
         defaultValue: '',
-        validates: [],
-        direction: 'horizontal',
+        validators: [],
+        layout: 'horizontal',
         props: {},
       },
       {
@@ -49,8 +67,8 @@ const configDefinitions = [
         description: '这里是长长的描述信息啊啊',
         tip: '提示信息',
         defaultValue: '',
-        validates: [],
-        direction: 'horizontal',
+        validators: [],
+        layout: 'horizontal',
         props: {},
       },
     ],
@@ -58,17 +76,27 @@ const configDefinitions = [
   {
     label: '高级配置',
     name: 'senior',
-    children: [],
+    children: [
+      {
+        name: 'hidden',
+        node: 'hidden',
+        defaultValue: 'hidden data',
+      },
+    ],
   },
 ]
+
+function handleChange(values) {
+  console.log('Config Change...', values)
+}
 
 function Setting() {
   return (
     <SettingProvider>
       <div className={styles.setting}>
-        <Card title="配置演示">
-          <ConfigPanel configDefinitions={configDefinitions}></ConfigPanel>
-        </Card>
+        <Module title="配置演示">
+          <ConfigPanel configDefinitions={configDefinitions} onChange={handleChange}></ConfigPanel>
+        </Module>
       </div>
     </SettingProvider>
   )
