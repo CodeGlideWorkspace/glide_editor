@@ -1,8 +1,8 @@
 import React from 'react'
-import { ConfigPanel, SettingProvider } from '@/packages/setting'
+import { Setting, SettingProvider } from '@/packages/editor'
 import { Module } from 'remote:glide_components/Module'
 
-import styles from './Setting.module.less'
+import styles from './SettingPanel.module.less'
 
 const configDefinitions = [
   {
@@ -86,20 +86,14 @@ const configDefinitions = [
   },
 ]
 
-function handleChange(values) {
-  console.log('Config Change...', values)
-}
-
-function Setting() {
+function SettingPanel() {
   return (
-    <SettingProvider>
-      <div className={styles.setting}>
-        <Module title="配置演示">
-          <ConfigPanel configDefinitions={configDefinitions} onChange={handleChange}></ConfigPanel>
-        </Module>
-      </div>
-    </SettingProvider>
+    <Module className={styles.panel} bordered={false} title="组件名称">
+      <SettingProvider>
+        <Setting configDefinitions={configDefinitions} />
+      </SettingProvider>
+    </Module>
   )
 }
 
-export default Setting
+export default SettingPanel

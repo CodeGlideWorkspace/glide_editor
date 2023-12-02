@@ -3,7 +3,7 @@ import { FormItem } from 'remote:glide_components/Form'
 import { Remote } from 'remote:glide_components/Remote'
 
 import { SettingContext } from '../SettingProvider'
-import builtinItemMap from '../items'
+import builtinItemMap from './items'
 
 function Item({ itemDefinition }) {
   const { itemPathMap } = useContext(SettingContext)
@@ -34,8 +34,8 @@ function Item({ itemDefinition }) {
         tooltip={itemDefinition.tip}
         required={itemDefinition.required}
         description={itemDefinition.description}
-        validators={itemDefinition.validators}
         dependencies={itemDefinition.dependencies}
+        validators={itemDefinition.validators}
       >
         {Component ? (
           <Component {...itemDefinition.props} />
