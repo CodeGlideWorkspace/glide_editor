@@ -1,6 +1,7 @@
 import React from 'react'
 import { Setting, SettingProvider } from '@/packages/editor'
 import { Module } from 'remote:glide_components/Module'
+import { Tab, TabPanel } from 'remote:glide_components/Tab'
 
 import styles from './SettingPanel.module.less'
 
@@ -88,9 +89,25 @@ const configDefinitions = [
 
 function SettingPanel() {
   return (
-    <Module className={styles.panel} bordered={false} title="组件名称">
+    <Module className={styles.panel} bordered={false} bodyStyle={{ padding: '0 16px 16px' }} title="组件名称">
       <SettingProvider>
-        <Setting configDefinitions={configDefinitions} />
+        <Tab>
+          <TabPanel name="property" title="属性">
+            <Setting configDefinitions={configDefinitions} />
+          </TabPanel>
+          <TabPanel name="style" title="样式">
+            样式面板
+          </TabPanel>
+          <TabPanel name="data" title="数据">
+            数据面板
+          </TabPanel>
+          <TabPanel name="action" title="动作">
+            动作面板
+          </TabPanel>
+          <TabPanel name="senior" title="高级">
+            高级面板
+          </TabPanel>
+        </Tab>
       </SettingProvider>
     </Module>
   )
