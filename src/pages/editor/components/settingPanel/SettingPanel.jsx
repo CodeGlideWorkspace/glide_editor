@@ -1,12 +1,12 @@
 import React from 'react'
-import { Setting, SettingProvider, useShadowDemo } from '@/packages/editor'
+import { Setting, SettingProvider, useDemo } from '@/packages/editor'
 import { Module } from 'remote:glide_components/Module'
 import { Tab, TabPanel } from 'remote:glide_components/Tab'
 
 import styles from './SettingPanel.module.less'
 
 function SettingPanel() {
-  const demo = useShadowDemo((state) => {
+  const demo = useDemo((state) => {
     return {
       state: {
         configDefinitions: state.configDefinitions,
@@ -29,9 +29,9 @@ function SettingPanel() {
   }
 
   return (
-    <Module className={styles.panel} bordered={false} bodyStyle={{ padding: '0 16px 16px' }} title="组件名称">
+    <Module className={styles.panel} bordered={false} bodyStyle={{ padding: '0' }} title="组件名称">
       <SettingProvider>
-        <Tab>
+        <Tab className={styles.tab}>
           <TabPanel name="property" title="属性">
             <Setting configDefinitions={demo.state.configDefinitions} onChange={handleChange} />
           </TabPanel>
