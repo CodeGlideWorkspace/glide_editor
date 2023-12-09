@@ -19,13 +19,13 @@ function SettingPanel() {
   })
 
   function handleChange(values) {
-    demo.operator.updateConfig(values)
-    demo.operator.updateConfigAsync(
-      Object.keys(values).reduce((result, key) => {
-        result[key] = values[key] ? `async_${values[key]}` : values[key]
-        return result
-      }, {}),
-    )
+    // demo.operator.updateConfig(values)
+    // demo.operator.updateConfigAsync(
+    //   Object.keys(values).reduce((result, key) => {
+    //     result[key] = values[key] ? `async_${values[key]}` : values[key]
+    //     return result
+    //   }, {}),
+    // )
   }
 
   return (

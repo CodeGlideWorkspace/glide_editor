@@ -106,6 +106,42 @@ function demo(set, get) {
             layout: 'horizontal',
             props: {},
           },
+          {
+            label: '下拉框',
+            name: 'select',
+            node: 'select',
+            description: '这是一个下拉框呀',
+            tip: '提示信息',
+            defaultValue: '',
+            props: {
+              data: [
+                { label: '选项1', value: 'option1' },
+                { label: '选项2', value: 'option2' },
+              ],
+            },
+          },
+          {
+            label: '异步下拉框',
+            name: 'asyncSelect',
+            node: 'select',
+            defaultValue: '',
+            dependencies: ['text3'],
+            props: {
+              async data(form) {
+                await delay(2000)
+
+                const data = [
+                  { label: '选项1', value: 'option1' },
+                  { label: '选项2', value: 'option2' },
+                ]
+
+                const value = form.getValue('text3')
+                data.push({ label: value, value })
+
+                return data
+              },
+            },
+          },
         ],
       },
       {

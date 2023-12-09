@@ -1,15 +1,48 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import { FormItem } from 'remote:glide_components/Form'
-import { Remote } from 'remote:glide_components/Remote'
+import { Remote, useParseRemote } from 'remote:glide_components/Remote'
+import { useMount } from 'remote:glide_components/hooks'
+import { isFunction } from 'remote:glide_components/utils'
 
 import { SettingContext } from '../SettingProvider'
-import builtinItemMap from './items'
+import { SchedulerContext } from './useScheduler'
 
 function Item({ itemDefinition }) {
   const { itemPathMap } = useContext(SettingContext)
+  const { scheduler } = useContext(SchedulerContext)
+  const remote = useParseRemote(itemPathMap[itemDefinition.node])
+  const [loading, setLoading] = useState(false)
+
+  const isAsync = isFunction(itemDefinition.props?.data)
+  const [data, setData] = useState(isAsync ? [] : itemDefinition.props?.data)
+
+  useMount(() => {
+    // 注册组件更新事件，当组件依赖更新时，会触发此事件
+    scheduler.subscribe(
+      itemDefinition.name,
+      async (form) => {
+        if (!isAsync) {
+          return
+        }
+        setLoading(true)
+        const result = await itemDefinition.props.data(form).catch((error) => {
+          setLoading(false)
+          throw error
+        })
+        setLoading(false)
+        setData(result || [])
+      },
+      itemDefinition.dependencies,
+    )
+  })
+
   const verticalLabelCol = { span: 24 }
   const horizontalLabelCol = { span: 8 }
-  const hasDependencies = itemDefinition.dependencies?.length > 0
+  const hasDependencies = !!itemDefinition.dependencies?.length
+
+  function handleChange() {
+    scheduler.change(itemDefinition.name)
+  }
 
   function renderHidden() {
     return (
@@ -25,7 +58,6 @@ function Item({ itemDefinition }) {
       return renderHidden()
     }
 
-    const Component = builtinItemMap[itemDefinition.node]
     return (
       <FormItem
         labelCol={itemDefinition.layout === 'vertical' ? verticalLabelCol : horizontalLabelCol}
@@ -37,18 +69,21 @@ function Item({ itemDefinition }) {
         dependencies={itemDefinition.dependencies}
         validators={itemDefinition.validators}
       >
-        {Component ? (
-          <Component {...itemDefinition.props} />
-        ) : (
-          <Remote $$path={itemPathMap[itemDefinition.node]?.componentPath} {...itemDefinition.props} />
-        )}
+        <Remote
+          $$path={remote.path}
+          $$exportName={remote.exportName}
+          {...itemDefinition.props}
+          {...(itemDefinition.props?.data ? { data } : {})}
+          loading={loading}
+          onChange={handleChange}
+        />
       </FormItem>
     )
   }
 
   if (hasDependencies) {
     return (
-      <FormItem shouldUpdate noStyle>
+      <FormItem dependencies={itemDefinition.dependencies} noStyle>
         {(form) => {
           const hidden =
             itemDefinition.visible && itemDefinition.visible(form.getValue(itemDefinition.name), form) === false

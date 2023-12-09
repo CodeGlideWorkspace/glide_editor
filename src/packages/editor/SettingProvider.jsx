@@ -4,12 +4,13 @@ export const SettingContext = React.createContext({
   /**
    * 存储配置组件的
    *
-   *  [nodeName]: [remotePath]
+   *  [nodeName]: [remotePath] || { path: [remotePath], exportName: [exportName] }
    *
    *  eg:
    *  {
    *    input: {
-   *      componentPath: 'remote:glide_components/Input',
+   *      path: 'remote:glide_components/Input',
+   *      exportName: 'default',
    *    },
    *  }
    */
@@ -19,7 +20,20 @@ export const SettingContext = React.createContext({
 function SettingProvider({ children }) {
   const itemPathMap = {
     input: {
-      componentPath: 'remote:glide_components/Input',
+      path: 'remote:glide_public_components/Items',
+      exportName: 'Input',
+    },
+    select: {
+      path: 'remote:glide_public_components/Items',
+      exportName: 'Select',
+    },
+    number: {
+      path: 'remote:glide_public_components/Items',
+      exportName: 'Number',
+    },
+    switch: {
+      path: 'remote:glide_public_components/Items',
+      exportName: 'Switch',
     },
   }
 
