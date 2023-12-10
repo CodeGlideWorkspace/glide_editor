@@ -7,6 +7,7 @@ import { DndContainer } from 'remote:glide_components/Dnd'
 
 import { ConfigPanel, SettingProvider } from '@/packages/setting'
 import { Module } from 'remote:glide_components/Module'
+import { Col, Row } from 'remote:glide_components/Grid'
 
 const configDefinition = [
   {
@@ -25,15 +26,23 @@ export default function Index() {
   return (
     <div className={styles.container}>
       <DndContainer>
-        <LibraryProvider />
-        <EditorProvider />
-        <SettingProvider>
-          <div className={styles.setting}>
-            <Module title="配置演示">
-              <ConfigPanel configDefinition={configDefinition}></ConfigPanel>
-            </Module>
-          </div>
-        </SettingProvider>
+        <Row>
+          <Col span={6}>
+            <LibraryProvider></LibraryProvider>
+          </Col>
+          <Col span={12}>
+            <EditorProvider />
+          </Col>
+          <Col span={6}>
+            <SettingProvider>
+              <div className={styles.setting}>
+                <Module title="配置演示">
+                  <ConfigPanel configDefinition={configDefinition}></ConfigPanel>
+                </Module>
+              </div>
+            </SettingProvider>
+          </Col>
+        </Row>
       </DndContainer>
     </div>
   )
