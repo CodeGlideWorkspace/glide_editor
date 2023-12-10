@@ -1,7 +1,9 @@
 import React from 'react'
 import { Layout, Header, Footer, Content, Sider } from 'remote:glide_components/Layout'
 import { useDemo } from '@/packages/editor'
+
 import SettingPanel from './components/settingPanel/SettingPanel'
+import Toolbar from './components/toolbar/Toolbar'
 
 import styles from './Editor.module.less'
 
@@ -16,7 +18,14 @@ function Editor() {
           <div>左侧面板区域</div>
         </Sider>
         <Content className={styles.content}>
-          <code>{JSON.stringify(values)}</code>
+          <Layout>
+            <Header style={{ height: '38px', lineHeight: '38px' }}>
+              <Toolbar />
+            </Header>
+            <Content className={styles.scroll}>
+              <code style={{ display: 'block', height: '1000px' }}>{JSON.stringify(values)}</code>
+            </Content>
+          </Layout>
         </Content>
         <Sider className={styles.right} width={320}>
           <SettingPanel />

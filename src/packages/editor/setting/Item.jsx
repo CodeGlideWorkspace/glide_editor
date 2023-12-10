@@ -40,7 +40,7 @@ function Item({ itemDefinition }) {
   const horizontalLabelCol = { span: 8 }
   const hasDependencies = !!itemDefinition.dependencies?.length
 
-  function handleChange() {
+  function handleChange(value) {
     scheduler.change(itemDefinition.name)
   }
 

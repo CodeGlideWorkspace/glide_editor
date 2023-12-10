@@ -39,7 +39,6 @@ function useSetting({ configDefinitions = [] }) {
     },
     {},
   )
-  console.log(initialValues, '...')
 
   return { groupDefinitions, initialValues }
 }
