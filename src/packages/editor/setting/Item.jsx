@@ -13,8 +13,8 @@ function Item({ itemDefinition }) {
   const remote = useParseRemote(itemPathMap[itemDefinition.node])
   const [loading, setLoading] = useState(false)
 
-  const isAsync = isFunction(itemDefinition.props?.data)
-  const [data, setData] = useState(isAsync ? [] : itemDefinition.props?.data)
+  const isAsync = isFunction(itemDefinition.hooks?.load)
+  const [data, setData] = useState([])
 
   useMount(() => {
     // 注册组件更新事件，当组件依赖更新时，会触发此事件
@@ -25,7 +25,7 @@ function Item({ itemDefinition }) {
           return
         }
         setLoading(true)
-        const result = await itemDefinition.props.data(form).catch((error) => {
+        const result = await itemDefinition.hooks.load(form).catch((error) => {
           setLoading(false)
           throw error
         })
@@ -67,13 +67,13 @@ function Item({ itemDefinition }) {
         required={itemDefinition.required}
         description={itemDefinition.description}
         dependencies={itemDefinition.dependencies}
-        validators={itemDefinition.validators}
+        validators={itemDefinition.hooks?.validators}
       >
         <Remote
           $$path={remote.path}
           $$exportName={remote.exportName}
           {...itemDefinition.props}
-          {...(itemDefinition.props?.data ? { data } : {})}
+          {...(isAsync ? { data } : {})}
           loading={loading}
           onChange={handleChange}
         />
@@ -86,7 +86,8 @@ function Item({ itemDefinition }) {
       <FormItem dependencies={itemDefinition.dependencies} noStyle>
         {(form) => {
           const hidden =
-            itemDefinition.visible && itemDefinition.visible(form.getValue(itemDefinition.name), form) === false
+            itemDefinition.hooks?.visible &&
+            itemDefinition.hooks.visible(form.getValue(itemDefinition.name), form) === false
           if (hidden) {
             return null
           }

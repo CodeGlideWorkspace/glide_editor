@@ -9,7 +9,7 @@ import { useScheduler, SchedulerContext } from './useScheduler'
 import Group from './Group'
 
 function Setting(props) {
-  const { groupDefinitions } = useSetting(props)
+  const { groupDefinitions, initialValues } = useSetting(props)
   const form = useForm()
   const scheduler = useScheduler(form)
 
@@ -24,12 +24,12 @@ function Setting(props) {
     marginBottom: token.margin,
   }
 
-  const defaultValue = groupDefinitions.map((group) => group.name)
+  const defaultCollapseValues = groupDefinitions.map((group) => group.name)
 
   return (
     <SchedulerContext.Provider value={{ scheduler }}>
-      <Form form={form} layout="horizontal" labelAlign="left" onChange={props.onChange}>
-        <Collapse ghost defaultValue={defaultValue}>
+      <Form form={form} layout="horizontal" labelAlign="left" initialValues={initialValues} onChange={props.onChange}>
+        <Collapse ghost defaultValue={defaultCollapseValues}>
           {groupDefinitions.map((group) => {
             return (
               <CollapsePanel

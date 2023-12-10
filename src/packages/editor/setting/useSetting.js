@@ -1,6 +1,6 @@
-import { isArray } from 'remote:glide_components/utils'
+import { isArray, reduceTrees } from 'remote:glide_components/utils'
 
-function useConfigPanel({ configDefinitions = [] }) {
+function useSetting({ configDefinitions = [] }) {
   const groupDefinitions = []
 
   // 存在子元素且不存在节点类型的为分组
@@ -21,7 +21,27 @@ function useConfigPanel({ configDefinitions = [] }) {
     }
   })
 
-  return { groupDefinitions }
+  // 获取默认值
+  const initialValues = reduceTrees(
+    configDefinitions,
+    (result, item) => {
+      if (isGroup(item)) {
+        return result
+      }
+
+      if (!item.name) {
+        return result
+      }
+
+      result[item.name] = item.defaultValue
+
+      return result
+    },
+    {},
+  )
+  console.log(initialValues, '...')
+
+  return { groupDefinitions, initialValues }
 }
 
-export default useConfigPanel
+export default useSetting

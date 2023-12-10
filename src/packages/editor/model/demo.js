@@ -47,7 +47,6 @@ function demo(set, get) {
         description: '这里是长长的描述信息啊啊',
         tip: '提示信息',
         defaultValue: '',
-        validators: [],
         layout: 'horizontal',
         props: {},
       },
@@ -62,20 +61,22 @@ function demo(set, get) {
             description: '这里是长长的描述信息啊啊',
             tip: '提示信息',
             defaultValue: '',
-            validators: [
-              (value, form) => {
-                if (form.getValue('text3') === 'error') {
-                  return '校验失败'
+            hooks: {
+              validators: [
+                (value, form) => {
+                  if (form.getValue('text3') === 'error') {
+                    return '校验失败'
+                  }
+                },
+              ],
+              /**
+               * 检测是否显示
+               */
+              visible(value, form) {
+                if (form.getValue('text3') === 'hidden') {
+                  return false
                 }
               },
-            ],
-            /**
-             * 检测是否显示
-             */
-            visible(value, form) {
-              if (form.getValue('text3') === 'hidden') {
-                return false
-              }
             },
             layout: 'vertical',
             required: true,
@@ -90,8 +91,7 @@ function demo(set, get) {
             node: 'number',
             description: '这里是长长的描述信息啊啊',
             tip: '提示信息',
-            defaultValue: '',
-            validators: [],
+            defaultValue: 1,
             layout: 'horizontal',
             props: {},
           },
@@ -101,8 +101,7 @@ function demo(set, get) {
             node: 'switch',
             description: '这里是长长的描述信息啊啊',
             tip: '提示信息',
-            defaultValue: '',
-            validators: [],
+            defaultValue: true,
             layout: 'horizontal',
             props: {},
           },
@@ -112,7 +111,7 @@ function demo(set, get) {
             node: 'select',
             description: '这是一个下拉框呀',
             tip: '提示信息',
-            defaultValue: '',
+            defaultValue: 'option2',
             props: {
               data: [
                 { label: '选项1', value: 'option1' },
@@ -126,8 +125,8 @@ function demo(set, get) {
             node: 'select',
             defaultValue: '',
             dependencies: ['text3'],
-            props: {
-              async data(form) {
+            hooks: {
+              async load(form) {
                 await delay(2000)
 
                 const data = [
@@ -136,11 +135,17 @@ function demo(set, get) {
                 ]
 
                 const value = form.getValue('text3')
-                data.push({ label: value, value })
+                if (value) {
+                  data.push({ label: value, value })
+                }
+
+                // 设置默认值
+                form.setValue('asyncSelect', 'option1')
 
                 return data
               },
             },
+            props: {},
           },
         ],
       },
