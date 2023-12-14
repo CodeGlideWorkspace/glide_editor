@@ -1,6 +1,7 @@
-import Setting from './setting/Setting'
+import ConfigPanel from './configPanel/ConfigPanel'
+import BehaviorPanel from './behaviorPanel/BehaviorPanel'
 import SettingProvider, { SettingContext } from './SettingProvider'
 
 export * from './model'
 
-export { Setting, SettingProvider, SettingContext }
+export { ConfigPanel, SettingProvider, SettingContext, BehaviorPanel }

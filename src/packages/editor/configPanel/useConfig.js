@@ -1,10 +1,10 @@
 import { isArray, reduceTrees } from 'remote:glide_components/utils'
 
-function useSetting({ configDefinitions = [] }) {
+function useConfig({ configDefinitions = [] }) {
   const groupDefinitions = []
 
-  // 存在子元素且不存在节点类型的为分组
   function isGroup(item) {
+    // 存在子元素且不存在节点类型的为分组
     return isArray(item.children) && !item.node
   }
 
@@ -12,7 +12,7 @@ function useSetting({ configDefinitions = [] }) {
     return !isGroup(item)
   })
   if (itemDefinitions.length) {
-    groupDefinitions.push({ label: '基础设置', name: '$$default', children: itemDefinitions })
+    groupDefinitions.push({ label: '基础信息', name: '$$default', children: itemDefinitions })
   }
 
   configDefinitions.forEach((item) => {
@@ -43,4 +43,4 @@ function useSetting({ configDefinitions = [] }) {
   return { groupDefinitions, initialValues }
 }
 
-export default useSetting
+export default useConfig

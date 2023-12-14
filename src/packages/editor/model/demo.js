@@ -166,6 +166,36 @@ function demo(set, get) {
       status: 'init',
     },
 
+    // 存储配置的行为
+    behaviors: [],
+
+    // 事件定义
+    eventDefinitions: [
+      {
+        label: '点击',
+        name: 'onClick',
+      },
+    ],
+    // 方法定义
+    apiDefinitions: [
+      {
+        label: '导出',
+        name: 'export',
+      },
+    ],
+
+    // 组件列表
+    components: [
+      { label: '组件1', value: 'com1' },
+      { label: '组件2', value: 'com2' },
+    ],
+
+    // 脚本列表
+    scripts: [
+      { label: '脚本1', value: 'script1' },
+      { label: '脚本2', value: 'script2' },
+    ],
+
     // 更新动作
     updateConfig: actionCreator(updateConfig),
     updateConfigAsync: actionCreator(updateConfigAsync),

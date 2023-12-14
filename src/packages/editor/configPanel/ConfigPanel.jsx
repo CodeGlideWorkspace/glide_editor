@@ -1,15 +1,16 @@
-import React from 'react'
+import React, { forwardRef, useImperativeHandle } from 'react'
 import { Form, useForm } from 'remote:glide_components/Form'
 import { Collapse, CollapsePanel } from 'remote:glide_components/Collapse'
-import { theme } from 'remote:glide_components/ConfigProvider'
 import { useMount } from 'remote:glide_components/hooks'
 
-import useSetting from './useSetting'
+import useConfig from './useConfig'
 import { useScheduler, SchedulerContext } from './useScheduler'
 import Group from './Group'
 
-function Setting(props) {
-  const { groupDefinitions, initialValues } = useSetting(props)
+import styles from './ConfigPanel.module.less'
+
+function ConfigPanel(props, ref) {
+  const { groupDefinitions, initialValues } = useConfig(props)
   const form = useForm()
   const scheduler = useScheduler(form)
 
@@ -17,12 +18,7 @@ function Setting(props) {
     scheduler.start()
   })
 
-  const { token } = theme.useToken()
-
-  const collapsePanelStyle = {
-    background: token.colorFillAlter,
-    marginBottom: token.margin,
-  }
+  useImperativeHandle(ref, () => form)
 
   const defaultCollapseValues = groupDefinitions.map((group) => group.name)
 
@@ -35,7 +31,7 @@ function Setting(props) {
               <CollapsePanel
                 key={group.name}
                 name={group.name}
-                style={collapsePanelStyle}
+                className={styles.panel}
                 title={group.label}
                 {...group.props}
               >
@@ -49,4 +45,4 @@ function Setting(props) {
   )
 }
 
-export default Setting
+export default forwardRef(ConfigPanel)

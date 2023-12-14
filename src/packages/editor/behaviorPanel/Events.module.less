@@ -1,0 +1,46 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px 0;
+}
+
+.event {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: rgba(0, 0, 0, 0.02);
+  padding: 8px;
+  gap: 8px 0;
+}
+
+.operator {
+  position: absolute;
+  top: 14px;
+  right: 8px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0 4px;
+  font-size: 14px;
+}
+
+.delete,
+.add {
+  cursor: pointer;
+}
+
+.item {
+  margin: 0;
+}
+
+.create {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 0 8px;
+  border: 1px dashed rgba(0, 0, 0, 0.45);
+  padding: 8px;
+  border-radius: 2px;
+  cursor: pointer;
+}
