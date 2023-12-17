@@ -6,3 +6,4 @@ dist
 .doer
 .doer.prod
 *.local
+.history
