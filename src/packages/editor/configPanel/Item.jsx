@@ -4,13 +4,13 @@ import { Remote, useParseRemote } from 'remote:glide_components/Remote'
 import { useMount } from 'remote:glide_components/hooks'
 import { isFunction } from 'remote:glide_components/utils'
 
-import { SettingContext } from '../SettingProvider'
+import { EditorContext } from '../EditorProvider'
 import { SchedulerContext } from './useScheduler'
 
 function Item({ itemDefinition }) {
-  const { itemPathMap } = useContext(SettingContext)
+  const { itemMap } = useContext(EditorContext)
   const { scheduler } = useContext(SchedulerContext)
-  const remote = useParseRemote(itemPathMap[itemDefinition.node])
+  const remote = useParseRemote(itemMap[itemDefinition.node])
   const [loading, setLoading] = useState(false)
 
   const isAsync = isFunction(itemDefinition.hooks?.load)

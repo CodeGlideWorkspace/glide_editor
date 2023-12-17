@@ -3,28 +3,27 @@ import { FormItem, FormList } from 'remote:glide_components/Form'
 import { Select } from 'remote:glide_components/FormBase'
 import { PlusSquareOutlined, MinusSquareOutlined } from 'remote:glide_components/Icon'
 
-import Actions from './Actions'
+import Methods from './Methods'
 
-import styles from './Events.module.less'
+import styles from './Actions.module.less'
 
-function Events({ name, eventOptions, apiOptions, componentOptions, scriptOptions }) {
+function Actions({ name, events, methods, components, scripts }) {
+  const eventOptions = events.map((event) => {
+    return { label: event.name, value: event.code }
+  })
+
   return (
     <FormList name={name}>
-      {(events, operator) => {
+      {(actions, operator) => {
         return (
           <div className={styles.container}>
-            {events.map(({ key, name, ...event }) => {
+            {actions.map(({ key, name, ...action }) => {
               return (
-                <div key={key} className={styles.event}>
-                  <FormItem className={styles.item} label="事件" required {...event} name={[name, 'eventId']}>
+                <div key={key} className={styles.action}>
+                  <FormItem className={styles.item} label="事件" required {...action} name={[name, 'eventCode']}>
                     <Select placeholder="事件" style={{ width: '80%' }} data={eventOptions} />
                   </FormItem>
-                  <Actions
-                    name={[name, 'actions']}
-                    apiOptions={apiOptions}
-                    componentOptions={componentOptions}
-                    scriptOptions={scriptOptions}
-                  />
+                  <Methods name={[name, 'methods']} methods={methods} components={components} scripts={scripts} />
                   <div className={styles.operator}>
                     <MinusSquareOutlined className={styles.delete} onClick={() => operator.remove(name)} />
                     <PlusSquareOutlined
@@ -35,7 +34,7 @@ function Events({ name, eventOptions, apiOptions, componentOptions, scriptOption
                 </div>
               )
             })}
-            {!events.length && (
+            {!actions.length && (
               <div className={styles.create} onClick={() => operator.add({ actions: [{}] })}>
                 <PlusSquareOutlined />
                 添加动作
@@ -48,4 +47,4 @@ function Events({ name, eventOptions, apiOptions, componentOptions, scriptOption
   )
 }
 
-export default Events
+export default Actions

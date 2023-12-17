@@ -1,7 +1,7 @@
 import ConfigPanel from './configPanel/ConfigPanel'
-import BehaviorPanel from './behaviorPanel/BehaviorPanel'
-import SettingProvider, { SettingContext } from './SettingProvider'
+import ActionPanel from './actionPanel/ActionPanel'
+import { EditorContext, EditorProvider } from './EditorProvider'
 
 export * from './model'
 
-export { ConfigPanel, SettingProvider, SettingContext, BehaviorPanel }
+export { ConfigPanel, EditorProvider, EditorContext, ActionPanel }

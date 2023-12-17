@@ -1,4 +1,4 @@
-import { createStore, createAction, createShadowStore } from 'remote:glide_components/store'
+import { createStore, createAction, withSelector } from 'remote:glide_components/store'
 import { eachTrees } from 'remote:glide_components/utils'
 
 function delay(time = 0) {
@@ -166,34 +166,34 @@ function demo(set, get) {
       status: 'init',
     },
 
-    // 存储配置的行为
-    behaviors: [],
+    // 存储配置的动作
+    actions: [],
 
     // 事件定义
     eventDefinitions: [
       {
-        label: '点击',
-        name: 'onClick',
+        name: '点击',
+        code: 'onClick',
       },
     ],
     // 方法定义
-    apiDefinitions: [
+    methodDefinitions: [
       {
-        label: '导出',
-        name: 'export',
+        name: '导出',
+        code: 'export',
       },
     ],
 
     // 组件列表
     components: [
-      { label: '组件1', value: 'com1' },
-      { label: '组件2', value: 'com2' },
+      { name: '组件1', code: 'com1' },
+      { name: '组件2', code: 'com2' },
     ],
 
     // 脚本列表
     scripts: [
-      { label: '脚本1', value: 'script1' },
-      { label: '脚本2', value: 'script2' },
+      { name: '脚本1', code: 'script1' },
+      { name: '脚本2', code: 'script2' },
     ],
 
     // 更新动作
@@ -202,7 +202,6 @@ function demo(set, get) {
   }
 }
 
-const useDemo = createStore(demo)
-const useShadowDemo = createShadowStore(useDemo)
+const useDemo = withSelector(createStore(demo))
 
-export { useDemo, useShadowDemo }
+export default useDemo

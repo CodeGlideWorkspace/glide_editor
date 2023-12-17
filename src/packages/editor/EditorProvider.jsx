@@ -1,6 +1,18 @@
-import React from 'react'
+import React, { createContext } from 'react'
 
-export const SettingContext = React.createContext({
+export const EditorContext = createContext({
+  /**
+   * 存储脚本对象
+   *
+   * @type Script
+   *
+   * @property {String} name 脚本名称
+   * @property {String} language 脚本语言 javascript | typescript
+   * @property {String} source 源代码
+   * @property {String} target 目标代码
+   */
+  scripts: [],
+
   /**
    * 存储配置组件的
    *
@@ -14,11 +26,11 @@ export const SettingContext = React.createContext({
    *    },
    *  }
    */
-  itemPathMap: {},
+  itemMap: {},
 })
 
-function SettingProvider({ children }) {
-  const itemPathMap = {
+export function EditorProvider({ children }) {
+  const itemMap = {
     input: {
       path: 'remote:glide_public_components/Items',
       exportName: 'Input',
@@ -37,7 +49,7 @@ function SettingProvider({ children }) {
     },
   }
 
-  return <SettingContext.Provider value={{ itemPathMap }}>{children}</SettingContext.Provider>
-}
+  const scripts = []
 
-export default SettingProvider
+  return <EditorContext.Provider value={{ itemMap, scripts }}>{children}</EditorContext.Provider>
+}
