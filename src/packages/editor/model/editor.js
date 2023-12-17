@@ -1,6 +1,7 @@
 import { createStore, createAction, withSelector } from 'remote:glide_components/store'
 
 import node from './node'
+import biz from './biz'
 import script from './script'
 
 /**
@@ -54,6 +55,7 @@ function editor(set, get) {
     getSelectNode: actionCreator(getSelectNode),
 
     ...node(actionCreator),
+    ...biz(actionCreator),
     ...script(actionCreator),
   }
 }

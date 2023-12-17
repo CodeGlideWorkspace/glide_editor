@@ -146,7 +146,35 @@ function node(actionCreator) {
   return {
     // 存储页面节点树
     node: {
-      id: uuid(),
+      code: uuid(),
+      type: '', // component组件 layout布局 materiel物料
+      name: 'Row',
+      title: '', // 标题
+      description: '', // 描述
+      tip: '', // 提示
+      image: '',
+      // 配置面板
+      configDefinitions: [],
+      // 样式面板
+      styleDefinitions: [],
+      // 事件定义
+      eventDefinitions: [
+        {
+          code: 'onClick',
+          name: '点击',
+          params: ['a', 'b', 'c'],
+        },
+      ],
+      // api定义
+      apiDefinitions: [
+        {
+          code: 'export',
+          name: '导出',
+        },
+      ],
+      slots: {
+        action: [],
+      },
       children: [],
     },
 

@@ -12,7 +12,12 @@
 function script(actionCreator) {
   return {
     scripts: [
-      { code: 'script1', name: '脚本1', target: 'return result()', source: `export default function execute() {}` },
+      {
+        code: 'script1',
+        name: '脚本1',
+        target: 'return result()',
+        source: `export default function execute() { return result() }`,
+      },
     ],
   }
 }
