@@ -4,18 +4,16 @@ import { Select } from 'remote:glide_components/FormBase'
 import { ApiOutlined, PlusOutlined, MinusOutlined } from 'remote:glide_components/Icon'
 
 import styles from './Methods.module.less'
+import useEditor from '../model/editor'
+import { componentOptionsSelector } from '../selector/editor'
+import { scriptOptionsSelector } from '../selector/resource'
 
-function Methods({ name, methods, components, scripts }) {
-  const componentOptions = components.map((component) => {
-    return { label: component.name, value: component.code }
-  })
+function Methods({ name, apis }) {
+  const componentOptions = useEditor(componentOptionsSelector)
+  const scriptOptions = useEditor(scriptOptionsSelector)
 
-  const scriptOptions = scripts.map((script) => {
-    return { label: script.name, value: script.code }
-  })
-
-  const methodOptions = methods.map((method) => {
-    return { label: method.name, value: method.code }
+  const apiOptions = apis.map((api) => {
+    return { label: api.title, value: api.name }
   })
 
   return (
@@ -40,8 +38,8 @@ function Methods({ name, methods, components, scripts }) {
                     <FormItem className={styles.item} required {...method} name={[name, 'scriptCode']}>
                       <Select style={{ width: '80px' }} placeholder="转换脚本" data={scriptOptions} />
                     </FormItem>
-                    <FormItem className={styles.item} required {...method} name={[name, 'methodCode']}>
-                      <Select style={{ width: '80px' }} placeholder="方法" data={methodOptions} />
+                    <FormItem className={styles.item} required {...method} name={[name, 'apiName']}>
+                      <Select style={{ width: '80px' }} placeholder="方法" data={apiOptions} />
                     </FormItem>
                   </div>
                 </div>

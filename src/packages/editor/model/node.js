@@ -1,54 +1,65 @@
 /**
  * 基础节点操作模型
+ *
+ * @type Node 节点对象
+ *
+ * @property {String} code 节点编码
+ * @property {String} name 节点名称
+ * @property {String} ref 节点引用名称
+ * @property {String} alias 节点别名
+ * @property {Object} configValue 节点配置值
+ * @property {Object} styleValue 节点样式值
+ * @property {Array<Action>} actions 节点动作配置
+ * @property {Object{ [slotName]: Array<Node> }} slots 节点插槽子节点
+ * @property {Array<Node>} children 子节点列表
+ *
  */
 
-import { uuid, findTree } from 'remote:glide_components/utils'
-
-function findNode(node, id) {
-  return findTree(node, (n) => n.id === id)
-}
-
-function findParentNode(node, id) {
-  return findTree(node, (n) => {
-    return n.children.some((child) => child.id === id)
-  })
-}
+import { uuid } from 'remote:glide_components/utils'
+import { nodeSelector, findParentNode } from '../selector/node'
 
 /**
- * 获取节点
+ * 创建节点类型
  *
- * @param {String} id 节点ID
+ * @param {String} name 节点名称
  *
  * @returns {Node} 返回节点信息
  */
-function getNode(id, operator) {
-  return findNode(operator.get().node, id)
+function createNode(name, operator) {
+  return {
+    code: uuid(),
+    name,
+    ref: name,
+    alias: '',
+    configValue: {},
+    styleValue: {},
+    actions: [],
+    slots: {},
+    children: [],
+  }
 }
-
-/**
- * 获取父节点
- *
- * @param {String} id 节点ID
- *
- * @returns {Node} 返回节点信息
- */
-function getParentNode(id, operator) {
-  return findParentNode(operator.get().node, id)
-}
-
 /**
  * 在尾部添加节点
  *
  * @param {Node} payload.node 节点信息
- * @param {?String} payload.parentId 可选，父节点ID，不传则添加到根节点上
+ * @param {?String} payload.slotName 可选，插槽名字，不传则放置于子节点
+ * @param {?String} payload.parentCode 可选，父节点code，不传则添加到根节点上
  *
  * @returns {void}
  */
 function appendNode(payload, operator) {
-  const { node, parentId } = payload
+  const { node, parentCode, slotName } = payload
   operator.set((state) => {
-    const parentNode = findNode(state.node, parentId) || state.node
-    parentNode.children.push(node)
+    const parentNode = nodeSelector(parentCode)(state) || state.node
+    if (!slotName) {
+      parentNode.children.push(node)
+      return
+    }
+
+    if (!parentNode.slots[slotName]) {
+      parentNode.slots[slotName] = []
+    }
+    parentNode.slots[slotName].push(node)
   })
 }
 
@@ -56,15 +67,23 @@ function appendNode(payload, operator) {
  * 在首部添加节点
  *
  * @param {Node} payload.node 节点信息
- * @param {?String} payload.parentId 可选，父节点ID，不传则添加到根节点上
+ * @param {?String} payload.slotName 可选，插槽名字，不传则放置于子节点
+ * @param {?String} payload.parentCode 可选，父节点code，不传则添加到根节点上
  *
  * @returns {void}
  */
 function prependNode(payload, operator) {
-  const { node, parentId } = payload
+  const { node, parentCode, slotName } = payload
   operator.set((state) => {
-    const parentNode = findNode(state.node, parentId) || state.node
-    parentNode.children.unshift(node)
+    const parentNode = nodeSelector(parentCode)(state) || state.node
+    if (!slotName) {
+      parentNode.children.unshift(node)
+      return
+    }
+    if (!parentNode.slots[slotName]) {
+      parentNode.slots[slotName] = []
+    }
+    parentNode.slots[slotName].unshift(node)
   })
 }
 
@@ -72,34 +91,53 @@ function prependNode(payload, operator) {
  * 插入节点
  *
  * @param {Node} payload.node 节点信息
- * @param {?String} payload.parentId 可选，父节点ID，不传则添加到根节点上
+ * @param {?String} payload.slotName 可选，插槽名字，不传则放置于子节点
+ * @param {?String} payload.parentCode 可选，父节点code，不传则添加到根节点上
  * @param {Number} payload.index 插入位置
  *
  * @returns {void}
  */
 function insertNode(payload, operator) {
-  const { node, parentId, index } = payload
+  const { node, parentCode, slotName, index } = payload
   operator.set((state) => {
-    const parentNode = findNode(state.node, parentId) || state.node
-    parentNode.children.splice(index, 0, node)
+    const parentNode = nodeSelector(parentCode)(state) || state.node
+    if (!slotName) {
+      parentNode.children.splice(index, 0, node)
+      return
+    }
+    if (!parentNode.slots[slotName]) {
+      parentNode.slots[slotName] = []
+    }
+    parentNode.slots[slotName].splice(index, 0, node)
   })
 }
 
 /**
  * 删除节点
  *
- * @param {String} id 节点id
+ * @param {String} code 节点code
  *
  * @returns {void}
  */
-function removeNode(id, operator) {
+function removeNode(code, operator) {
   operator.set((state) => {
-    const parentNode = findParentNode(state.node, id)
+    const { node: parentNode, slotName } = findParentNode(state.node, code) || {}
     if (!parentNode) {
       return
     }
-    const index = parentNode.children.findIndex((child) => child.id === id)
-    parentNode.children.splice(index, 1)
+
+    if (!slotName) {
+      const index = parentNode.children.findIndex((child) => child.code === code)
+      parentNode.children.splice(index, 1)
+      return
+    }
+
+    if (!parentNode.slots[slotName]) {
+      parentNode.slots[slotName] = []
+    }
+
+    const slotIndex = parentNode.slots[slotName].findIndex((child) => child.code === code)
+    parentNode.slots[slotName].splice(slotIndex, 1)
   })
 }
 
@@ -110,81 +148,79 @@ function removeNode(id, operator) {
  *
  * @returns {void}
  */
-function updateNode(node, operator) {
+function setNode(node, operator) {
   operator.set((state) => {
-    const parentNode = findParentNode(state.node, node.id)
+    const { node: parentNode, slotName } = findParentNode(state.node, node.code) || {}
     if (!parentNode) {
+      state.node = node
       return
     }
 
-    const index = parentNode.children.findIndex((child) => child.id === node.id)
-    parentNode.children.splice(index, 1, node)
+    if (!slotName) {
+      const index = parentNode.children.findIndex((child) => child.code === node.code)
+      parentNode.children.splice(index, 1, node)
+      return
+    }
+
+    if (!parentNode.slots[slotName]) {
+      parentNode.slots[slotName] = []
+    }
+
+    const slotIndex = parentNode.slots[slotName].findIndex((child) => child.id === node.id)
+    parentNode.slots[slotName].splice(slotIndex, 1, node)
   })
 }
 
 /**
  * 移动节点
  *
- * @param {String} payload.id 移动的节点ID
- * @param {String} payload.targetId 移动到的目标节点ID
+ * @param {String} payload.code 移动的节点code
+ * @param {String} payload.targetCode 移动到的目标节点code
  * @param {String} payload.direction 移动的方向 before | after
  *
  * @returns {void}
  */
 function moveNode(payload, operator) {
-  const { id, targetId, direction } = payload
+  const { code, targetCode, direction } = payload
   const state = operator.get()
-  const moveNode = state.getNode(id)
-  const parentNode = state.getParentNode(targetId)
-  const index = parentNode.children.findIndex((child) => child.id === targetId)
+  const moveNode = nodeSelector(code)(state)
+  const { node: parentNode, slotName } = findParentNode(state.node, targetCode) || {}
+  if (!parentNode) {
+    return
+  }
 
-  state.removeNode(id)
-  state.insertNode({ node: moveNode, parentId: parentNode.id, index: direction === 'before' ? index : index + 1 })
+  if (!slotName) {
+    const index = parentNode.children.findIndex((child) => child.code === targetCode)
+    state.removeNode(code)
+    state.insertNode({ node: moveNode, parentCode: parentNode.code, index: direction === 'before' ? index : index + 1 })
+    return
+  }
+
+  if (!parentNode.slots[slotName]) {
+    parentNode.slots[slotName] = []
+  }
+
+  const slotIndex = parentNode.slots[slotName].findIndex((child) => child.code === targetCode)
+  state.removeNode(code)
+  state.insertNode({
+    node: moveNode,
+    parentCode: parentNode.code,
+    slotName,
+    index: direction === 'before' ? slotIndex : slotIndex + 1,
+  })
 }
 
 function node(actionCreator) {
   return {
-    // 存储页面节点树
-    node: {
-      code: uuid(),
-      type: '', // component组件 layout布局 materiel物料
-      name: 'Row',
-      title: '', // 标题
-      description: '', // 描述
-      tip: '', // 提示
-      image: '',
-      // 配置面板
-      configDefinitions: [],
-      // 样式面板
-      styleDefinitions: [],
-      // 事件定义
-      eventDefinitions: [
-        {
-          code: 'onClick',
-          name: '点击',
-          params: ['a', 'b', 'c'],
-        },
-      ],
-      // api定义
-      apiDefinitions: [
-        {
-          code: 'export',
-          name: '导出',
-        },
-      ],
-      slots: {
-        action: [],
-      },
-      children: [],
-    },
+    // 节点结构
+    node: undefined,
 
-    getNode: actionCreator(getNode),
-    getParentNode: actionCreator(getParentNode),
+    createNode: actionCreator(createNode),
+    setNode: actionCreator(setNode),
     appendNode: actionCreator(appendNode),
     prependNode: actionCreator(prependNode),
     insertNode: actionCreator(insertNode),
     removeNode: actionCreator(removeNode),
-    updateNode: actionCreator(updateNode),
     moveNode: actionCreator(moveNode),
   }
 }

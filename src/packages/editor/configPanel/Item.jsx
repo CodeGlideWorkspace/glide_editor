@@ -1,16 +1,16 @@
 import React, { useContext, useState } from 'react'
 import { FormItem } from 'remote:glide_components/Form'
-import { Remote, useParseRemote } from 'remote:glide_components/Remote'
+import { Remote } from 'remote:glide_components/Remote'
 import { useMount } from 'remote:glide_components/hooks'
 import { isFunction } from 'remote:glide_components/utils'
 
-import { EditorContext } from '../EditorProvider'
 import { SchedulerContext } from './useScheduler'
+import useEditor from '../model/editor'
+import { itemPathMapSelector } from '../selector/resource'
 
 function Item({ itemDefinition }) {
-  const { itemMap } = useContext(EditorContext)
+  const itemPathMap = useEditor(itemPathMapSelector)
   const { scheduler } = useContext(SchedulerContext)
-  const remote = useParseRemote(itemMap[itemDefinition.node])
   const [loading, setLoading] = useState(false)
 
   const isAsync = isFunction(itemDefinition.hooks?.load)
@@ -54,7 +54,7 @@ function Item({ itemDefinition }) {
 
   function renderItem() {
     // 隐藏域
-    if (itemDefinition.node === 'hidden') {
+    if (itemDefinition.node === 'Hidden') {
       return renderHidden()
     }
 
@@ -70,8 +70,7 @@ function Item({ itemDefinition }) {
         validators={itemDefinition.hooks?.validators}
       >
         <Remote
-          $$path={remote.path}
-          $$exportName={remote.exportName}
+          $$path={itemPathMap[itemDefinition.node]}
           {...itemDefinition.props}
           {...(isAsync ? { data } : {})}
           loading={loading}

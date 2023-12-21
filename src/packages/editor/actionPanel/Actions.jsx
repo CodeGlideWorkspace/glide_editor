@@ -7,9 +7,9 @@ import Methods from './Methods'
 
 import styles from './Actions.module.less'
 
-function Actions({ name, events, methods, components, scripts }) {
+function Actions({ name, events, apis }) {
   const eventOptions = events.map((event) => {
-    return { label: event.name, value: event.code }
+    return { label: event.title, value: event.name }
   })
 
   return (
@@ -20,10 +20,10 @@ function Actions({ name, events, methods, components, scripts }) {
             {actions.map(({ key, name, ...action }) => {
               return (
                 <div key={key} className={styles.action}>
-                  <FormItem className={styles.item} label="事件" required {...action} name={[name, 'eventCode']}>
+                  <FormItem className={styles.item} label="事件" required {...action} name={[name, 'eventName']}>
                     <Select placeholder="事件" style={{ width: '80%' }} data={eventOptions} />
                   </FormItem>
-                  <Methods name={[name, 'methods']} methods={methods} components={components} scripts={scripts} />
+                  <Methods name={[name, 'actions']} apis={apis} />
                   <div className={styles.operator}>
                     <MinusSquareOutlined className={styles.delete} onClick={() => operator.remove(name)} />
                     <PlusSquareOutlined

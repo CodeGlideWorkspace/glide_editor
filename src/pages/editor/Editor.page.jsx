@@ -1,7 +1,8 @@
 import React from 'react'
 import { Layout, Header, Footer, Content, Sider } from 'remote:glide_components/Layout'
-import { useEditor, EditorProvider } from '@/packages/editor'
+import { Editable, useEditor, componentPathMapSelector } from '@/packages/editor'
 import { View } from '@/packages/view'
+import { useMount } from 'remote:glide_components/hooks'
 
 import SettingPanel from './components/settingPanel/SettingPanel'
 import Toolbar from './components/toolbar/Toolbar'
@@ -9,10 +10,17 @@ import Toolbar from './components/toolbar/Toolbar'
 import styles from './Editor.module.less'
 
 function Editor() {
-  const scripts = useEditor.use.scripts()
+  const componentPathMap = useEditor(componentPathMapSelector)
+  const node = useEditor.use.node()
+  const createPageNode = useEditor.use.createPageNode()
+
+  useMount(() => {
+    // 初始化一个空页面
+    createPageNode()
+  })
 
   return (
-    <EditorProvider>
+    <Editable>
       <Layout className={styles.editor}>
         <Header>顶部Header区域</Header>
         <Layout className={styles.container}>
@@ -25,7 +33,7 @@ function Editor() {
                 <Toolbar />
               </Header>
               <Content className={styles.scroll}>
-                <View scripts={scripts} />
+                <View node={node} componentPathMap={componentPathMap} />
               </Content>
             </Layout>
           </Content>
@@ -35,7 +43,7 @@ function Editor() {
         </Layout>
         <Footer>状态栏</Footer>
       </Layout>
-    </EditorProvider>
+    </Editable>
   )
 }
 

@@ -9,7 +9,7 @@ import Group from './Group'
 
 import styles from './ConfigPanel.module.less'
 
-function ConfigPanel(props, ref) {
+const ConfigPanel = forwardRef(function ConfigPanel(props, ref) {
   const { groupDefinitions, initialValues } = useConfig(props)
   const form = useForm()
   const scheduler = useScheduler(form)
@@ -43,6 +43,10 @@ function ConfigPanel(props, ref) {
       </Form>
     </SchedulerContext.Provider>
   )
+})
+
+ConfigPanel.defaultProps = {
+  configDefinitions: [],
 }
 
-export default forwardRef(ConfigPanel)
+export default ConfigPanel

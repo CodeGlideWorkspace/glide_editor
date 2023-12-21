@@ -1,7 +1,16 @@
 import ConfigPanel from './configPanel/ConfigPanel'
 import ActionPanel from './actionPanel/ActionPanel'
-import { EditorContext, EditorProvider } from './EditorProvider'
+import Editable from './Editable'
+import useEditor from './model/editor'
+import { componentPathMapSelector } from './selector/resource'
+import { selectNodeSelector, componentSelector } from './selector/editor'
 
-export * from './model'
-
-export { ConfigPanel, EditorProvider, EditorContext, ActionPanel }
+export {
+  ConfigPanel,
+  ActionPanel,
+  Editable,
+  useEditor,
+  componentPathMapSelector,
+  selectNodeSelector,
+  componentSelector,
+}

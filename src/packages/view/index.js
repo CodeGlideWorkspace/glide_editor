@@ -1,3 +1,5 @@
 import View from './View'
 
-export { View }
+import { fetchComponents } from './service/component'
+
+export { View, fetchComponents }

@@ -1,6 +1,6 @@
 import { isArray, reduceTrees } from 'remote:glide_components/utils'
 
-function useConfig({ configDefinitions = [] }) {
+function useConfig({ configDefinitions }) {
   const groupDefinitions = []
 
   function isGroup(item) {
