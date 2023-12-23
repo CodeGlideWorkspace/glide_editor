@@ -2,28 +2,11 @@ import { useRef, useEffect } from 'react'
 
 import ScriptExecutor from './ScriptExecutor'
 
-/**
- * 方法结构定义
- *
- * @type {Object} Method
- *
- * @property {String} componentCode 组件名称
- * @property {String} scriptCode 挂载的转换脚本名称
- * @property {String} methodCode 行为名称
- *
- * 动作结构定义
- *
- * @type {Object} Action
- *
- * @property {String} eventCode 事件名称
- * @property {Array<Action>} methods 方法列表
- */
-
 class Action {
   /**
    * 组件实例存储
    *
-   * @type {Object<{ [name]: Ref }>}
+   * @type {Object<{ [code]: Ref }>}
    */
   refs = {}
 
@@ -45,31 +28,37 @@ class Action {
     this.scripts = scripts
   }
 
-  getScript(scriptCode) {
-    return this.scripts.find((script) => script.code === scriptCode)
+  getScript(scriptName) {
+    if (!scriptName) {
+      return
+    }
+
+    return this.scripts.find((script) => script.name === scriptName)
   }
 
   /**
    * 创建多个行为事件
    *
-   * @param {String} name 组件的命名，组件唯一标识
-   * @param {Array<Method>} methods 方法列表
+   * @param {String} code 组件的唯一编码
+   * @param {Array<Method>} actions 方法列表
+   * @param {EventDefinition} eventDefinition 事件定义
    */
-  createEvent(name, methods) {
+  createEvent(code, actions, eventDefinition) {
     return (...params) => {
-      methods.forEach(({ componentCode, scriptCode, methodCode }) => {
+      actions.forEach(({ componentCode, scriptName, apiName }) => {
         const ref = this.refs[componentCode]
         if (!ref) {
           return
         }
 
-        const method = ref[methodCode]
+        const method = ref[apiName]
         if (!method) {
           return
         }
 
-        const script = this.getScript(scriptCode)
-        method(...this.scriptExecutor.execute(script, {}, params))
+        const script = this.getScript(scriptName)
+        const result = this.scriptExecutor.execute(script, {}, eventDefinition.paramNames, params)
+        method(...result)
       })
     }
   }
@@ -77,15 +66,23 @@ class Action {
   /**
    * 合成行为事件，输出对应的渲染属性
    *
-   * @param {String} name 组件的命名，组件唯一标识
+   * @param {String} code 组件的唯一编码
    * @param {Array<Action>} actions 行为列表
+   * @param {Array<EventDefinition>} options.eventDefinitions 事件定义
    *
-   * @returns {Object<{ [eventCode]: Handle }>}
+   * @returns {Object<{ [eventName]: Handle }>}
    */
-  render(name, actions = []) {
+  render(code, actions = [], options = {}) {
+    const { eventDefinitions } = options
+
     return actions.reduce((props, action) => {
-      const { eventCode, methods } = action
-      props[eventCode] = this.createEvent(name, methods)
+      const { eventName, actions } = action
+      const eventDefinition = eventDefinitions.find((item) => item.name === eventName)
+      if (!eventDefinition) {
+        return props
+      }
+
+      props[eventName] = this.createEvent(code, actions, eventDefinition)
       return props
     }, {})
   }
@@ -93,14 +90,14 @@ class Action {
   /**
    * 行为注册事件
    *
-   * @param {String} name 组件的命名，组件唯一标识
+   * @param {String} code 组件的唯一编码
    * @param {Ref} ref 组件的实例引用
    * @param {Array<Action>} actions 行为列表
    *
    * @returns {Object<{ [eventName]: Handle }>}
    */
-  register(name, ref) {
-    this.refs[name] = ref
+  register(code, ref) {
+    this.refs[code] = ref
   }
 }
 

@@ -13,6 +13,7 @@ function SettingPanel() {
   const selectNode = useEditor(selectNodeSelector)
   // 获取当前选择的组件定义
   const selectComponent = useEditor(componentSelector(selectNode?.name))
+
   const updateConfig = useEditor.use.updateConfig()
   const updateActions = useEditor.use.updateActions()
 
@@ -43,8 +44,8 @@ function SettingPanel() {
         <TabPanel name="action" title="动作">
           <ActionPanel
             ref={actionRef}
+            node={selectNode}
             eventDefinitions={selectComponent?.config?.eventDefinitions}
-            apiDefinitions={selectComponent?.config?.apiDefinitions}
             onChange={handleActionChange}
           />
         </TabPanel>

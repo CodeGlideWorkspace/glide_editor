@@ -6,25 +6,14 @@ function result(...params) {
 }
 
 class ScriptExecutor {
-  getParamNames(params) {
-    return Object.keys(params).reduce((result, name) => {
-      result.push(name)
-      return result
-    }, [])
-  }
-
-  // TODO 实现逻辑
-  createTSTemplate() {}
-
   /**
    * 创建JS函数模版
    *
-   * @param {Array<any>} params 脚本执行参数
+   * @param {Array<String>} paramNames 脚本参数命名列表
    *
    * @returns {String}
    */
-  createJSTemplate(params) {
-    const paramNames = this.getParamNames(params)
+  createTemplate(paramNames) {
     return `
     export default function execute(${paramNames.join(', ')}) {
       // result的参数会作为后续执行过程的参数
@@ -38,20 +27,32 @@ class ScriptExecutor {
    *
    * @param {Script} script 脚本对象
    * @param {Object<any>} context 脚本执行上下文
-   * @param {Array<any>} params 脚本执行参数
+   * @param {Array<String>} paramNames 脚本参数命名列表
    *
    * @returns {Function}
    */
-  createFunc(script, context, params) {
-    const paramNames = this.getParamNames(params)
-    paramNames.unshift('global')
+  createFunc(script, context, paramNames = []) {
+    if (!script) {
+      return
+    }
+
+    const currentParamNames = paramNames.slice()
+    currentParamNames.unshift('global')
 
     // 创建脚本执行器
     // eslint-disable-next-line no-new-func
     return new Function(
-      paramNames.join(','),
+      currentParamNames.join(','),
       `
-      with (global) {
+      var context = new Proxy(global, {
+        get(target, prop) {
+          if (prop in target) {
+            return target[prop]
+          }
+          return undefined
+        }
+      })
+      with (context) {
         ${script.target}
       }
       `,
@@ -63,12 +64,13 @@ class ScriptExecutor {
    *
    * @param {Script} script 脚本对象
    * @param {Object<any>} context 脚本执行上下文
+   * @param {Array<String>} paramNames 脚本参数命名列表
    * @param {Array<any>} params 脚本执行参数
    *
    * @returns {Array<any>}
    */
-  execute(script, context, params) {
-    const func = this.createFunc(script, context, params)
+  execute(script, context, paramNames, params) {
+    const func = this.createFunc(script, context, paramNames)
     if (!func) {
       return params
     }

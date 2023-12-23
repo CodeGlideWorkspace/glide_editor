@@ -18,8 +18,8 @@ function loadScripts(payload, operator) {
       {
         name: 'script1',
         title: '脚本1',
-        target: 'return result()',
-        source: `export default function execute() { return result() }`,
+        target: 'return result(count + "" + suffix)',
+        source: `export default function execute() { return result(count + suffix) }`,
       },
     ]
   })

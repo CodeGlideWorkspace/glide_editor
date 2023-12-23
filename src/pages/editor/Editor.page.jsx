@@ -1,6 +1,6 @@
 import React from 'react'
 import { Layout, Header, Footer, Content, Sider } from 'remote:glide_components/Layout'
-import { Editable, useEditor, componentPathMapSelector } from '@/packages/editor'
+import { Editable, useEditor, componentPathMapSelector, componentMapSelector } from '@/packages/editor'
 import { View } from '@/packages/view'
 import { useMount } from 'remote:glide_components/hooks'
 
@@ -11,18 +11,28 @@ import styles from './Editor.module.less'
 
 function Editor() {
   const componentPathMap = useEditor(componentPathMapSelector)
+  const componentMap = useEditor(componentMapSelector)
   const node = useEditor.use.node()
   const createPageNode = useEditor.use.createPageNode()
+  const createNode = useEditor.use.createNode()
+  const appendNode = useEditor.use.appendNode()
+  const scripts = useEditor.use.scripts()
 
   useMount(() => {
     // 初始化一个空页面
     createPageNode()
   })
 
+  function handleAdd() {
+    appendNode({ node: createNode('BizTable') })
+  }
+
   return (
     <Editable>
       <Layout className={styles.editor}>
-        <Header>顶部Header区域</Header>
+        <Header>
+          <button onClick={handleAdd}>添加一个组件</button>
+        </Header>
         <Layout className={styles.container}>
           <Sider className={styles.left} collapsible width={260} collapsedWidth={40}>
             <div>左侧面板区域</div>
@@ -33,7 +43,7 @@ function Editor() {
                 <Toolbar />
               </Header>
               <Content className={styles.scroll}>
-                <View node={node} componentPathMap={componentPathMap} />
+                <View node={node} scripts={scripts} componentMap={componentMap} componentPathMap={componentPathMap} />
               </Content>
             </Layout>
           </Content>

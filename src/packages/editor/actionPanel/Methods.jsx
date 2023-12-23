@@ -6,18 +6,16 @@ import { ApiOutlined, PlusOutlined, MinusOutlined } from 'remote:glide_component
 import styles from './Methods.module.less'
 import useEditor from '../model/editor'
 import { componentOptionsSelector } from '../selector/editor'
-import { scriptOptionsSelector } from '../selector/resource'
+import { scriptOptionsSelector, componentSelectorByCode } from '../selector/resource'
 
-function Methods({ name, apis }) {
+function Methods({ parentName, name: listName }) {
   const componentOptions = useEditor(componentOptionsSelector)
   const scriptOptions = useEditor(scriptOptionsSelector)
 
-  const apiOptions = apis.map((api) => {
-    return { label: api.title, value: api.name }
-  })
+  const nextParentName = [...parentName, ...listName]
 
   return (
-    <FormList name={name}>
+    <FormList name={listName}>
       {(methods, operator) => {
         return (
           <>
@@ -35,11 +33,30 @@ function Methods({ name, apis }) {
                     </div>
                   </div>
                   <div className={styles.content}>
-                    <FormItem className={styles.item} required {...method} name={[name, 'scriptCode']}>
+                    <FormItem className={styles.item} {...method} name={[name, 'scriptName']}>
                       <Select style={{ width: '80px' }} placeholder="转换脚本" data={scriptOptions} />
                     </FormItem>
-                    <FormItem className={styles.item} required {...method} name={[name, 'apiName']}>
-                      <Select style={{ width: '80px' }} placeholder="方法" data={apiOptions} />
+                    <FormItem dependencies={[[...nextParentName, name, 'componentCode']]} noStyle>
+                      {(form) => {
+                        // 获取所选组件的api选项
+                        const componentCode = form.getValue([...nextParentName, name, 'componentCode'])
+
+                        let options = []
+                        if (componentCode) {
+                          const state = useEditor.getState()
+                          const component = componentSelectorByCode(componentCode)(state)
+                          options =
+                            component?.config?.apiDefinitions?.map((api) => {
+                              return { label: api.title, value: api.name }
+                            }) || []
+                        }
+
+                        return (
+                          <FormItem className={styles.item} required {...method} name={[name, 'apiName']}>
+                            <Select style={{ width: '80px' }} placeholder="方法" data={options} />
+                          </FormItem>
+                        )
+                      }}
                     </FormItem>
                   </div>
                 </div>

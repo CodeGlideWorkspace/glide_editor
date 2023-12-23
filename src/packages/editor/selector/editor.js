@@ -30,18 +30,3 @@ export function componentOptionsSelector(state) {
 export function selectNodeSelector(state) {
   return nodeSelector(state.selectCode)(state) || state.node
 }
-
-/**
- * 获取组件定义
- *
- * @param {String} name 组件名称
- *
- * @returns {Component} 组件定义
- */
-export function componentSelector(name) {
-  return function (state) {
-    return state.components.find((item) => {
-      return item?.config?.name === name
-    })
-  }
-}

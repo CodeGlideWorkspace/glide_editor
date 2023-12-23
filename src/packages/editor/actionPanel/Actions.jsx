@@ -7,23 +7,51 @@ import Methods from './Methods'
 
 import styles from './Actions.module.less'
 
-function Actions({ name, events, apis }) {
-  const eventOptions = events.map((event) => {
-    return { label: event.title, value: event.name }
-  })
+function Actions({ name: actionsName, node, events }) {
+  // 获取排除自身的已经配置的事件映射表
+  function getExcludeEventMap(name) {
+    return (
+      node?.actions?.reduce((result, item, index) => {
+        if (index === name) {
+          return result
+        }
+
+        if (item.eventName) {
+          result[item.eventName] = true
+        }
+
+        return result
+      }, {}) || {}
+    )
+  }
+
+  // 获取可配置的事件名称
+  function getEventOptions(excludeEventMap) {
+    return events.reduce((result, item) => {
+      if (excludeEventMap[item.name]) {
+        return result
+      }
+
+      result.push({ label: item.title, value: item.name })
+      return result
+    }, [])
+  }
 
   return (
-    <FormList name={name}>
+    <FormList name={actionsName}>
       {(actions, operator) => {
         return (
           <div className={styles.container}>
             {actions.map(({ key, name, ...action }) => {
+              const excludeEventMap = getExcludeEventMap(name)
+              const eventOptions = getEventOptions(excludeEventMap)
+
               return (
                 <div key={key} className={styles.action}>
                   <FormItem className={styles.item} label="事件" required {...action} name={[name, 'eventName']}>
                     <Select placeholder="事件" style={{ width: '80%' }} data={eventOptions} />
                   </FormItem>
-                  <Methods name={[name, 'actions']} apis={apis} />
+                  <Methods parentName={[actionsName]} name={[name, 'actions']} />
                   <div className={styles.operator}>
                     <MinusSquareOutlined className={styles.delete} onClick={() => operator.remove(name)} />
                     <PlusSquareOutlined

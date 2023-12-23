@@ -22,9 +22,13 @@ const ConfigPanel = forwardRef(function ConfigPanel(props, ref) {
 
   const defaultCollapseValues = groupDefinitions.map((group) => group.name)
 
+  function handleChange(_, values) {
+    props.onChange(values)
+  }
+
   return (
     <SchedulerContext.Provider value={{ scheduler }}>
-      <Form form={form} layout="horizontal" labelAlign="left" initialValues={initialValues} onChange={props.onChange}>
+      <Form form={form} layout="horizontal" labelAlign="left" initialValues={initialValues} onChange={handleChange}>
         <Collapse ghost defaultValue={defaultCollapseValues}>
           {groupDefinitions.map((group) => {
             return (
@@ -47,6 +51,7 @@ const ConfigPanel = forwardRef(function ConfigPanel(props, ref) {
 
 ConfigPanel.defaultProps = {
   configDefinitions: [],
+  onChange() {},
 }
 
 export default ConfigPanel
