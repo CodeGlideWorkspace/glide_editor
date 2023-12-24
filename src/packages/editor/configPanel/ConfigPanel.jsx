@@ -29,7 +29,7 @@ const ConfigPanel = forwardRef(function ConfigPanel(props, ref) {
   return (
     <SchedulerContext.Provider value={{ scheduler }}>
       <Form form={form} layout="horizontal" labelAlign="left" initialValues={initialValues} onChange={handleChange}>
-        <Collapse ghost defaultValue={defaultCollapseValues}>
+        <Collapse ghost defaultValue={defaultCollapseValues} collapsible={props.collapsible}>
           {groupDefinitions.map((group) => {
             return (
               <CollapsePanel

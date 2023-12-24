@@ -13,18 +13,18 @@ function Editor() {
   const componentPathMap = useEditor(componentPathMapSelector)
   const componentMap = useEditor(componentMapSelector)
   const node = useEditor.use.node()
-  const createPageNode = useEditor.use.createPageNode()
-  const createNode = useEditor.use.createNode()
-  const appendNode = useEditor.use.appendNode()
+  const initialEditor = useEditor.use.initialEditor()
+  const createEditorNode = useEditor.use.createEditorNode()
+  const appendEditorNode = useEditor.use.appendEditorNode()
   const scripts = useEditor.use.scripts()
 
   useMount(() => {
-    // 初始化一个空页面
-    createPageNode()
+    // 初始化编辑器
+    initialEditor()
   })
 
   function handleAdd() {
-    appendNode({ node: createNode('BizTable') })
+    appendEditorNode({ node: createEditorNode('BizTable') })
   }
 
   return (

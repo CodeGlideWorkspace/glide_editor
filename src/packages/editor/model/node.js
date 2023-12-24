@@ -19,7 +19,7 @@ import { uuid } from 'remote:glide_components/utils'
 import { nodeSelector, findParentNode } from '../selector/node'
 
 /**
- * 创建节点类型
+ * 创建基本节点类型
  *
  * @param {String} name 节点名称
  *
@@ -29,15 +29,35 @@ function createNode(name, operator) {
   return {
     code: uuid(),
     name,
-    ref: name,
-    alias: '',
-    configValue: {},
-    styleValue: {},
-    actions: [],
     slots: {},
     children: [],
   }
 }
+
+/**
+ * 更新节点基本信息
+ *
+ * @param {String} payload.code 节点code
+ * @param {String} payload.config 节点配置
+ *
+ * @returns {void}
+ */
+function updateNode(payload, operator) {
+  const { code, config = {} } = payload
+  operator.set((state) => {
+    const node = nodeSelector(code)(state)
+    if (!node) {
+      return
+    }
+
+    Object.keys(config).forEach((key) => {
+      if (key in node) {
+        node[key] = config[key]
+      }
+    })
+  })
+}
+
 /**
  * 在尾部添加节点
  *
@@ -217,6 +237,7 @@ function node(actionCreator) {
 
     createNode: actionCreator(createNode),
     setNode: actionCreator(setNode),
+    updateNode: actionCreator(updateNode),
     appendNode: actionCreator(appendNode),
     prependNode: actionCreator(prependNode),
     insertNode: actionCreator(insertNode),

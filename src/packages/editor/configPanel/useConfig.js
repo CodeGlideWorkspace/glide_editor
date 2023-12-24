@@ -1,6 +1,6 @@
 import { isArray, reduceTrees } from 'remote:glide_components/utils'
 
-function useConfig({ configDefinitions }) {
+function useConfig({ configDefinitions, collapsible }) {
   const groupDefinitions = []
 
   function isGroup(item) {
@@ -8,18 +8,18 @@ function useConfig({ configDefinitions }) {
     return isArray(item.children) && !item.node
   }
 
-  const itemDefinitions = configDefinitions.filter((item) => {
-    return !isGroup(item)
-  })
-  if (itemDefinitions.length) {
-    groupDefinitions.push({ label: '基础信息', name: '$$default', children: itemDefinitions })
-  }
-
   configDefinitions.forEach((item) => {
     if (isGroup(item)) {
       groupDefinitions.push(item)
     }
   })
+
+  const itemDefinitions = configDefinitions.filter((item) => {
+    return !isGroup(item)
+  })
+  if (itemDefinitions.length) {
+    groupDefinitions.push({ label: '其他', name: '$$other', children: itemDefinitions })
+  }
 
   // 获取默认值
   const initialValues = reduceTrees(

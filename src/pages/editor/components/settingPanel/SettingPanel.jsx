@@ -1,28 +1,37 @@
-import React, { useRef } from 'react'
+import React from 'react'
 import { ConfigPanel, ActionPanel, useEditor, selectNodeSelector, componentSelector } from '@/packages/editor'
 import { Module } from 'remote:glide_components/Module'
 import { Tab, TabPanel } from 'remote:glide_components/Tab'
 
+import { componentInfoComponentDefinitions } from './config'
+
 import styles from './SettingPanel.module.less'
 
 function SettingPanel() {
-  const configRef = useRef(null)
-  const actionRef = useRef(null)
-
   // 获取当前选择的组件节点
   const selectNode = useEditor(selectNodeSelector)
   // 获取当前选择的组件定义
   const selectComponent = useEditor(componentSelector(selectNode?.name))
 
-  const updateConfig = useEditor.use.updateConfig()
-  const updateActions = useEditor.use.updateActions()
+  const updateNodeConfig = useEditor.use.updateNodeConfig()
+  const updateNodeActions = useEditor.use.updateNodeActions()
+  const updateNodeStyle = useEditor.use.updateNodeStyle()
+  const updateEditorNode = useEditor.use.updateEditorNode()
+
+  function handleInfoChange(value) {
+    updateEditorNode({ code: selectNode?.code, config: value })
+  }
 
   function handleConfigChange(value) {
-    updateConfig({ code: selectNode?.code, value })
+    updateNodeConfig({ code: selectNode?.code, value })
   }
 
   function handleActionChange(value) {
-    updateActions({ code: selectNode?.code, value })
+    updateNodeActions({ code: selectNode?.code, value })
+  }
+
+  function handleStyleChange(value) {
+    updateNodeStyle({ code: selectNode?.code, value })
   }
 
   return (
@@ -30,20 +39,25 @@ function SettingPanel() {
       <Tab className={styles.tab}>
         <TabPanel name="property" title="属性">
           <ConfigPanel
-            ref={configRef}
+            node={selectNode}
+            collapsible={false}
+            configDefinitions={componentInfoComponentDefinitions}
+            onChange={handleInfoChange}
+          />
+          <ConfigPanel
+            node={selectNode}
             configDefinitions={selectComponent?.config?.configDefinitions}
             onChange={handleConfigChange}
           />
         </TabPanel>
         <TabPanel name="style" title="样式">
-          样式面板
+          <ConfigPanel configDefinitions={selectComponent?.config?.styleDefinitions} onChange={handleStyleChange} />
         </TabPanel>
         <TabPanel name="data" title="数据">
           数据面板
         </TabPanel>
         <TabPanel name="action" title="动作">
           <ActionPanel
-            ref={actionRef}
             node={selectNode}
             eventDefinitions={selectComponent?.config?.eventDefinitions}
             onChange={handleActionChange}
