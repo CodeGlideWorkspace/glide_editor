@@ -19,19 +19,19 @@ function SettingPanel() {
   const updateEditorNode = useEditor.use.updateEditorNode()
 
   function handleInfoChange(value) {
-    updateEditorNode({ code: selectNode?.code, config: value })
+    updateEditorNode({ code: selectNode.code, config: value })
   }
 
   function handleConfigChange(value) {
-    updateNodeConfig({ code: selectNode?.code, value })
+    updateNodeConfig({ code: selectNode.code, value })
   }
 
   function handleActionChange(value) {
-    updateNodeActions({ code: selectNode?.code, value })
+    updateNodeActions({ code: selectNode.code, value })
   }
 
   function handleStyleChange(value) {
-    updateNodeStyle({ code: selectNode?.code, value })
+    updateNodeStyle({ code: selectNode.code, value })
   }
 
   return (
@@ -39,13 +39,12 @@ function SettingPanel() {
       <Tab className={styles.tab}>
         <TabPanel name="property" title="属性">
           <ConfigPanel
-            node={selectNode}
             collapsible={false}
             configDefinitions={componentInfoComponentDefinitions}
             onChange={handleInfoChange}
           />
           <ConfigPanel
-            node={selectNode}
+            initialValues={selectNode.configValue}
             configDefinitions={selectComponent?.config?.configDefinitions}
             onChange={handleConfigChange}
           />
@@ -59,6 +58,7 @@ function SettingPanel() {
         <TabPanel name="action" title="动作">
           <ActionPanel
             node={selectNode}
+            initialValues={selectNode?.actions}
             eventDefinitions={selectComponent?.config?.eventDefinitions}
             onChange={handleActionChange}
           />

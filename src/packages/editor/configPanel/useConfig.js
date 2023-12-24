@@ -1,6 +1,6 @@
 import { isArray, reduceTrees } from 'remote:glide_components/utils'
 
-function useConfig({ configDefinitions, collapsible }) {
+function useConfig({ configDefinitions, initialValues = {} }) {
   const groupDefinitions = []
 
   function isGroup(item) {
@@ -21,8 +21,8 @@ function useConfig({ configDefinitions, collapsible }) {
     groupDefinitions.push({ label: '其他', name: '$$other', children: itemDefinitions })
   }
 
-  // 获取默认值
-  const initialValues = reduceTrees(
+  // 获取当前配置值
+  const values = reduceTrees(
     configDefinitions,
     (result, item) => {
       if (isGroup(item)) {
@@ -33,14 +33,19 @@ function useConfig({ configDefinitions, collapsible }) {
         return result
       }
 
-      result[item.name] = item.defaultValue
+      // 值已经存在则不使用默认值
+      if (item.name in initialValues) {
+        result[item.name] = initialValues[item.name]
+      } else {
+        result[item.name] = item.defaultValue
+      }
 
       return result
     },
     {},
   )
 
-  return { groupDefinitions, initialValues }
+  return { groupDefinitions, initialValues: values }
 }
 
 export default useConfig

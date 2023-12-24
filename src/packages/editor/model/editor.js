@@ -62,6 +62,7 @@ function createEditorNode(name, operator) {
 function initialEditor(_, operator) {
   const state = operator.get()
   const node = state.createEditorNode('Page')
+
   state.setNode(node)
 }
 

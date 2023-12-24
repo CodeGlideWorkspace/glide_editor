@@ -3,7 +3,7 @@ import { Form, useForm } from 'remote:glide_components/Form'
 
 import Actions from './Actions'
 
-const ActionPanel = forwardRef(function ActionPanel({ node, eventDefinitions, onChange }, ref) {
+const ActionPanel = forwardRef(function ActionPanel({ node, eventDefinitions, initialValues, onChange }, ref) {
   const form = useForm()
   useImperativeHandle(ref, () => form)
 
@@ -11,8 +11,10 @@ const ActionPanel = forwardRef(function ActionPanel({ node, eventDefinitions, on
     onChange(values?.actions)
   }
 
+  console.log(initialValues)
+
   return (
-    <Form form={form} layout="horizontal" initialValues={{}} onChange={handleChange}>
+    <Form form={form} layout="horizontal" initialValues={{ actions: initialValues }} onChange={handleChange}>
       <Actions name="actions" node={node} events={eventDefinitions} />
     </Form>
   )
