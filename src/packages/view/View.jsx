@@ -2,6 +2,7 @@ import React from 'react'
 import { Remote } from 'remote:glide_components/Remote'
 
 import useAction from './useAction'
+import Box from './Box'
 
 function View({ node, scripts, componentMap, componentPathMap }) {
   const action = useAction({ scripts })
@@ -27,6 +28,33 @@ function View({ node, scripts, componentMap, componentPathMap }) {
     return <>{children.map((child) => renderNode(child))}</>
   }
 
+  // 渲染真实的远程组件
+  function renderRemote(n, component, render) {
+    const hasApiDefinitions = !!component.config.apiDefinitions?.length
+    const refs = {}
+    if (hasApiDefinitions) {
+      refs.ref = (el) => action.register(n.code, el)
+    }
+
+    return (
+      <Remote
+        key={n.code}
+        $$path={componentPathMap[n.name]}
+        // 按需注册ref
+        {...refs}
+        // 渲染组件属性
+        {...n.config.property}
+        // 渲染样式属性
+        {...n.config.style}
+        {...renderSlots(n.slots)}
+        // 渲染注册动作，内部会管理各个组件的互相调用关系
+        {...action.render(n.code, n.config.actions, { eventDefinitions: component.config.eventDefinitions })}
+      >
+        {render()}
+      </Remote>
+    )
+  }
+
   // 动态渲染真实组件
   function renderNode(n) {
     if (!n) {
@@ -38,27 +66,15 @@ function View({ node, scripts, componentMap, componentPathMap }) {
       return null
     }
 
-    const hasApiDefinitions = !!component.config.apiDefinitions?.length
-    const refs = {}
-    if (hasApiDefinitions) {
-      refs.ref = (el) => action.register(n.code, el)
+    if (component.config.type === 'layout' && component.config.strictMode) {
+      return renderRemote(n, component, () => {
+        return <Box value={n.config.cssBox}>{renderChildren(n.children)}</Box>
+      })
     }
 
-    return (
-      <Remote
-        $$path={componentPathMap[n.name]}
-        key={n.code}
-        // 按需注册ref
-        {...refs}
-        // 渲染组件属性
-        {...n.configValue}
-        {...renderSlots(n.slots)}
-        // 渲染注册动作，内部会管理各个组件的互相调用关系
-        {...action.render(n.code, n.actions, { eventDefinitions: component.config.eventDefinitions })}
-      >
-        {renderChildren(n.children)}
-      </Remote>
-    )
+    return renderRemote(n, component, () => {
+      return renderChildren(n.children)
+    })
   }
 
   return renderNode(node)

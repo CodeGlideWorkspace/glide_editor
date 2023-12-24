@@ -15,7 +15,7 @@ export function componentOptionsSelector(state) {
   return reduceTree(
     state.node,
     (result, item) => {
-      result.push({ label: item.ref, value: item.code })
+      result.push({ label: item.config.ref, value: item.code })
       return result
     },
     [],

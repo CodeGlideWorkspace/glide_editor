@@ -1,7 +1,6 @@
 import { createStore, createAction, withSelector } from 'remote:glide_components/store'
 
 import node from './node'
-import config from './config'
 import resource from './resource'
 
 import { nodeSelector } from '../selector/node'
@@ -46,10 +45,27 @@ function unselectNode(_, operator) {
 function createEditorNode(name, operator) {
   const state = operator.get()
   const node = state.createNode(name)
-  node.ref = name
-  node.configValue = {}
-  node.styleValue = {}
-  node.actions = []
+  // 组件命名
+  node.config.ref = name
+  // 组件配置值
+  node.config.property = {}
+  // 组件样式值
+  node.config.style = {}
+  // 组件动作配置
+  node.config.actions = []
+  // 组件css盒模型
+  node.config.cssBox = {
+    width: {
+      value: undefined,
+      unit: 'px',
+    },
+    height: {
+      value: undefined,
+      unit: 'px',
+    },
+    margin: [],
+    padding: [],
+  }
 
   return node
 }
@@ -84,16 +100,36 @@ function appendEditorNode(payload, operator) {
 }
 
 /**
- * 更新节点基本信息
+ * 更新节点配置信息
  *
  * @param {String} payload.code 节点code
- * @param {String} payload.config 节点配置
+ * @param {String} payload.key 节点配置键名
+ * @param {Any} payload.value 节点配置值
  *
  * @returns {void}
  */
 function updateEditorNode(payload, operator) {
+  const { code, key, value } = payload
   const state = operator.get()
-  state.updateNode(payload)
+  state.updateNode({ code, key, value })
+}
+
+/**
+ * 更新节点批量配置信息
+ *
+ * @param {String} payload.code 节点code
+ * @param {Object} payload.config 节点配置
+ *
+ * @returns {void}
+ */
+function batchUpdateEditorNode(payload, operator) {
+  const { code, config = {} } = payload
+  const state = operator.get()
+
+  Object.keys(config).forEach((key) => {
+    const value = config[key]
+    state.updateNode({ code, key, value })
+  })
 }
 
 function editor(set, get) {
@@ -108,10 +144,10 @@ function editor(set, get) {
     createEditorNode: actionCreator(createEditorNode),
     initialEditor: actionCreator(initialEditor),
     appendEditorNode: actionCreator(appendEditorNode),
+    batchUpdateEditorNode: actionCreator(batchUpdateEditorNode),
     updateEditorNode: actionCreator(updateEditorNode),
 
     ...node(actionCreator),
-    ...config(actionCreator),
     ...resource(actionCreator),
   }
 }

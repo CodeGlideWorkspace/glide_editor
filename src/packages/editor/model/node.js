@@ -29,8 +29,12 @@ function createNode(name, operator) {
   return {
     code: uuid(),
     name,
+    // 插槽子节点
     slots: {},
+    // 子节点
     children: [],
+    // 存储其他配置信息
+    config: {},
   }
 }
 
@@ -38,23 +42,20 @@ function createNode(name, operator) {
  * 更新节点基本信息
  *
  * @param {String} payload.code 节点code
- * @param {String} payload.config 节点配置
+ * @param {String} payload.key 节点配置键名
+ * @param {Any} payload.value 节点配置值
  *
  * @returns {void}
  */
 function updateNode(payload, operator) {
-  const { code, config = {} } = payload
+  const { code, key, value } = payload
   operator.set((state) => {
     const node = nodeSelector(code)(state)
     if (!node) {
       return
     }
 
-    Object.keys(config).forEach((key) => {
-      if (key in node) {
-        node[key] = config[key]
-      }
-    })
+    node.config[key] = value
   })
 }
 

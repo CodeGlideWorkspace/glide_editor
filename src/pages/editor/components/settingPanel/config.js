@@ -1,7 +1,7 @@
 export const componentInfoComponentDefinitions = [
   {
-    label: '基本信息',
-    name: '$$default',
+    label: '图层信息',
+    name: '$$layer',
     children: [
       {
         label: '命名',

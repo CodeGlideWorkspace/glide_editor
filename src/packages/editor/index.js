@@ -1,5 +1,6 @@
 import ConfigPanel from './configPanel/ConfigPanel'
 import ActionPanel from './actionPanel/ActionPanel'
+import BoxPanel from './boxPanel/BoxPanel'
 import Editable from './Editable'
 import useEditor from './model/editor'
 import { componentPathMapSelector, componentSelector, componentMapSelector } from './selector/resource'
@@ -8,6 +9,7 @@ import { selectNodeSelector } from './selector/editor'
 export {
   ConfigPanel,
   ActionPanel,
+  BoxPanel,
   Editable,
   useEditor,
   componentPathMapSelector,

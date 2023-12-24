@@ -11,11 +11,9 @@ const ActionPanel = forwardRef(function ActionPanel({ node, eventDefinitions, in
     onChange(values?.actions)
   }
 
-  console.log(initialValues)
-
   return (
     <Form form={form} layout="horizontal" initialValues={{ actions: initialValues }} onChange={handleChange}>
-      <Actions name="actions" node={node} events={eventDefinitions} />
+      <Actions name="actions" node={node} value={initialValues} events={eventDefinitions} />
     </Form>
   )
 })

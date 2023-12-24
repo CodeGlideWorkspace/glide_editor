@@ -7,11 +7,11 @@ import Methods from './Methods'
 
 import styles from './Actions.module.less'
 
-function Actions({ name: actionsName, node, events }) {
+function Actions({ name: actionsName, value, events }) {
   // 获取排除自身的已经配置的事件映射表
   function getExcludeEventMap(name) {
     return (
-      node?.actions?.reduce((result, item, index) => {
+      value.reduce((result, item, index) => {
         if (index === name) {
           return result
         }
@@ -73,6 +73,10 @@ function Actions({ name: actionsName, node, events }) {
       }}
     </FormList>
   )
+}
+
+Actions.defaultProps = {
+  value: [],
 }
 
 export default Actions
