@@ -66,15 +66,21 @@ function View({ node, scripts, componentMap, componentPathMap }) {
       return null
     }
 
-    if (component.config.type === 'layout' && component.config.strictMode) {
+    // 严格布局模式渲染
+    if (component.config.strictMode) {
       return renderRemote(n, component, () => {
         return <Box value={n.config.cssBox}>{renderChildren(n.children)}</Box>
       })
     }
 
-    return renderRemote(n, component, () => {
-      return renderChildren(n.children)
-    })
+    // 普通模式布局渲染
+    return (
+      <Box value={n.config.cssBox}>
+        {renderRemote(n, component, () => {
+          return renderChildren(n.children)
+        })}
+      </Box>
+    )
   }
 
   return renderNode(node)
