@@ -65,7 +65,7 @@ function Actions({ name: actionsName, value, events }) {
             {!actions.length && (
               <div className={styles.create} onClick={() => operator.add({ actions: [{}] })}>
                 <PlusSquareOutlined />
-                添加动作
+                添加事件
               </div>
             )}
           </div>

@@ -1,5 +1,13 @@
 import React from 'react'
-import { ConfigPanel, ActionPanel, BoxPanel, useEditor, selectNodeSelector, componentSelector } from '@/packages/editor'
+import {
+  ConfigPanel,
+  ActionPanel,
+  BoxPanel,
+  Relationship,
+  useEditor,
+  selectNodeSelector,
+  componentSelector,
+} from '@/packages/editor'
 import { Module } from 'remote:glide_components/Module'
 import { Tab, TabPanel } from 'remote:glide_components/Tab'
 
@@ -46,7 +54,6 @@ function SettingPanel() {
       <Tab className={styles.tab}>
         <TabPanel name="property" title="属性">
           <ConfigPanel
-            collapsible={false}
             initialValues={selectNode?.config}
             configDefinitions={componentInfoComponentDefinitions}
             onChange={handleInfoChange}
@@ -69,6 +76,7 @@ function SettingPanel() {
           数据面板
         </TabPanel>
         <TabPanel name="action" title="动作">
+          <Relationship />
           <ActionPanel
             initialValues={selectNode?.config?.actions}
             eventDefinitions={selectComponent?.config?.eventDefinitions}

@@ -1,4 +1,5 @@
 import React from 'react'
+import { Collapse, CollapsePanel } from 'remote:glide_components/Collapse'
 
 import Box from './Box'
 import Size from './Size'
@@ -27,35 +28,39 @@ function BoxPanel({ initialValues, onChange }) {
   }
 
   return (
-    <Box
-      className={styles.margin}
-      title="间距"
-      value={initialValues.margin}
-      onChange={(value) => handleChange('margin', value)}
-    >
-      <Box
-        className={styles.padding}
-        title="填充"
-        value={initialValues.padding}
-        onChange={(value) => handleChange('padding', value)}
-      >
-        <div className={styles.rect}>
-          <Size
-            value={initialValues.width.value}
-            unit={initialValues.width.unit}
-            onChange={handleWidthChange}
-            onUnitChange={handleWidthUnitChange}
-          />
-          <span style={{ margin: '0 6px' }}>x</span>
-          <Size
-            value={initialValues.height.value}
-            unit={initialValues.height.unit}
-            onChange={handleHeightChange}
-            onUnitChange={handleHeightUnitChange}
-          />
-        </div>
-      </Box>
-    </Box>
+    <Collapse className={styles.collapse} ghost defaultValue={['box']}>
+      <CollapsePanel name="box" title="盒模型">
+        <Box
+          className={styles.margin}
+          title="间距"
+          value={initialValues.margin}
+          onChange={(value) => handleChange('margin', value)}
+        >
+          <Box
+            className={styles.padding}
+            title="填充"
+            value={initialValues.padding}
+            onChange={(value) => handleChange('padding', value)}
+          >
+            <div className={styles.rect}>
+              <Size
+                value={initialValues.width.value}
+                unit={initialValues.width.unit}
+                onChange={handleWidthChange}
+                onUnitChange={handleWidthUnitChange}
+              />
+              <span style={{ margin: '0 6px' }}>x</span>
+              <Size
+                value={initialValues.height.value}
+                unit={initialValues.height.unit}
+                onChange={handleHeightChange}
+                onUnitChange={handleHeightUnitChange}
+              />
+            </div>
+          </Box>
+        </Box>
+      </CollapsePanel>
+    </Collapse>
   )
 }
 
