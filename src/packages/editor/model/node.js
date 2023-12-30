@@ -25,9 +25,9 @@ import { nodeSelector, findParentNode } from '../selector/node'
  *
  * @returns {Node} 返回节点信息
  */
-function createNode(name, operator) {
+function createNode(name = '', operator) {
   return {
-    code: uuid(),
+    code: `${name.replace(/^\$\$/, '')}_${uuid()}`,
     name,
     // 插槽子节点
     slots: {},

@@ -4,6 +4,7 @@ import node from './node'
 import resource from './resource'
 
 import { nodeSelector } from '../selector/node'
+import { ROOT_NAME } from '../selector/editor'
 
 /**
  * 选择节点
@@ -46,13 +47,15 @@ function createEditorNode(name, operator) {
   const state = operator.get()
   const node = state.createNode(name)
   // 组件命名
-  node.config.ref = name
+  node.config.ref = name.replace(/^\$\$/, '')
   // 组件配置值
   node.config.property = {}
   // 组件样式值
   node.config.style = {}
   // 组件动作配置
   node.config.actions = []
+  // 组件依赖配置
+  node.config.dependencies = []
   // 组件css盒模型
   node.config.cssBox = {
     width: {
@@ -77,7 +80,7 @@ function createEditorNode(name, operator) {
  */
 function initialEditor(_, operator) {
   const state = operator.get()
-  const node = state.createEditorNode('Page')
+  const node = state.createEditorNode(ROOT_NAME)
 
   state.setNode(node)
 }

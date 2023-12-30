@@ -1,26 +1,26 @@
 import React, { useContext, useState } from 'react'
 import { FormItem } from 'remote:glide_components/Form'
 import { Remote } from 'remote:glide_components/Remote'
-import { useMount } from 'remote:glide_components/hooks'
 import { isFunction } from 'remote:glide_components/utils'
 
 import { SchedulerContext } from './useScheduler'
 import useEditor from '../model/editor'
 import { itemPathMapSelector } from '../selector/resource'
+import LifeCycle from './LifeCycle'
 
 function Item({ itemDefinition }) {
   const itemPathMap = useEditor(itemPathMapSelector)
-  const { scheduler } = useContext(SchedulerContext)
+  const { form, scheduler } = useContext(SchedulerContext)
   const [loading, setLoading] = useState(false)
 
   const isAsync = isFunction(itemDefinition.hooks?.load)
   const [data, setData] = useState([])
 
-  useMount(() => {
+  function handleMount() {
     // 注册组件更新事件，当组件依赖更新时，会触发此事件
     scheduler.subscribe(
       itemDefinition.name,
-      async (form) => {
+      async () => {
         if (!isAsync) {
           return
         }
@@ -34,14 +34,18 @@ function Item({ itemDefinition }) {
       },
       itemDefinition.dependencies,
     )
-  })
+  }
+
+  function handleUnmount() {
+    scheduler.unsubscribe(itemDefinition.name)
+  }
 
   const verticalLabelCol = { span: 24 }
   const horizontalLabelCol = { span: 8 }
   const hasDependencies = !!itemDefinition.dependencies?.length
 
   function handleChange(value) {
-    scheduler.change(itemDefinition.name)
+    scheduler.publish(itemDefinition.name)
   }
 
   function renderHidden() {
@@ -55,28 +59,34 @@ function Item({ itemDefinition }) {
   function renderItem() {
     // 隐藏域
     if (itemDefinition.node === 'Hidden') {
-      return renderHidden()
+      return (
+        <LifeCycle onMount={handleMount} onUnmount={handleUnmount}>
+          {renderHidden()}
+        </LifeCycle>
+      )
     }
 
     return (
-      <FormItem
-        labelCol={itemDefinition.layout === 'vertical' ? verticalLabelCol : horizontalLabelCol}
-        label={itemDefinition.label}
-        name={itemDefinition.name}
-        tooltip={itemDefinition.tip}
-        required={itemDefinition.required}
-        description={itemDefinition.description}
-        dependencies={itemDefinition.dependencies}
-        validators={itemDefinition.hooks?.validators}
-      >
-        <Remote
-          $$path={itemPathMap[itemDefinition.node]}
-          {...itemDefinition.props}
-          {...(isAsync ? { data } : {})}
-          loading={loading}
-          onChange={handleChange}
-        />
-      </FormItem>
+      <LifeCycle onMount={handleMount} onUnmount={handleUnmount}>
+        <FormItem
+          labelCol={itemDefinition.layout === 'vertical' ? verticalLabelCol : horizontalLabelCol}
+          label={itemDefinition.label}
+          name={itemDefinition.name}
+          tooltip={itemDefinition.tip}
+          required={itemDefinition.required}
+          description={itemDefinition.description}
+          dependencies={itemDefinition.dependencies}
+          validators={itemDefinition.hooks?.validators}
+        >
+          <Remote
+            $$path={itemPathMap[itemDefinition.node]}
+            {...itemDefinition.props}
+            {...(isAsync ? { data } : {})}
+            loading={loading}
+            onChange={handleChange}
+          />
+        </FormItem>
+      </LifeCycle>
     )
   }
 

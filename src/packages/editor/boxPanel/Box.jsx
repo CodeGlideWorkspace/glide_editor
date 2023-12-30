@@ -1,5 +1,5 @@
 import React from 'react'
-import classNames from 'classnames'
+import { classNames } from 'remote:glide_components/utils'
 
 import Size from './Size'
 

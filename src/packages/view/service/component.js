@@ -5,7 +5,7 @@ import { loadRemote } from 'remote:glide_components/Remote'
  *
  * @param {ComponentPath} componentPaths 远程组件路径列表
  *
- * @returns
+ * @returns {Promise<void>}
  */
 export function fetchComponents(componentPaths) {
   return new Promise((resolve) => {

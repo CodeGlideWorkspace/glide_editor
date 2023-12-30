@@ -12,10 +12,10 @@ import styles from './ConfigPanel.module.less'
 const ConfigPanel = forwardRef(function ConfigPanel(props, ref) {
   const { groupDefinitions, initialValues } = useConfig(props)
   const form = useForm()
-  const scheduler = useScheduler(form)
+  const scheduler = useScheduler()
 
   useMount(() => {
-    scheduler.start()
+    scheduler.publish()
   })
 
   useImperativeHandle(ref, () => form)
@@ -27,7 +27,7 @@ const ConfigPanel = forwardRef(function ConfigPanel(props, ref) {
   }
 
   return (
-    <SchedulerContext.Provider value={{ scheduler }}>
+    <SchedulerContext.Provider value={{ scheduler, form }}>
       <Form form={form} layout="horizontal" labelAlign="left" initialValues={initialValues} onChange={handleChange}>
         <Collapse className={styles.collapse} ghost defaultValue={defaultCollapseValues}>
           {groupDefinitions.map((group) => {

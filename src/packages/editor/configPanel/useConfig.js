@@ -1,6 +1,6 @@
 import { isArray, reduceTrees } from 'remote:glide_components/utils'
 
-function useConfig({ configDefinitions, initialValues = {} }) {
+function useConfig({ configDefinitions, value = {} }) {
   const groupDefinitions = []
 
   function isGroup(item) {
@@ -34,8 +34,8 @@ function useConfig({ configDefinitions, initialValues = {} }) {
       }
 
       // 值已经存在则不使用默认值
-      if (item.name in initialValues) {
-        result[item.name] = initialValues[item.name]
+      if (item.name in value) {
+        result[item.name] = value[item.name]
       } else {
         result[item.name] = item.defaultValue
       }

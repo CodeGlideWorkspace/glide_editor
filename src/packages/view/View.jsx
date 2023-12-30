@@ -1,11 +1,14 @@
 import React from 'react'
 import { Remote } from 'remote:glide_components/Remote'
 
-import useAction from './useAction'
 import Box from './Box'
+import Controller from './Controller'
+import useAction from './useAction'
+import useGlide from './useGlide'
 
 function View({ node, scripts, componentMap, componentPathMap }) {
   const action = useAction({ scripts })
+  const glide = useGlide({ node })
 
   // 渲染插槽组件
   function renderSlots(slots) {
@@ -33,25 +36,31 @@ function View({ node, scripts, componentMap, componentPathMap }) {
     const hasApiDefinitions = !!component.config.apiDefinitions?.length
     const refs = {}
     if (hasApiDefinitions) {
-      refs.ref = (el) => action.register(n.code, el)
+      refs.ref = (el) => {
+        action.register(n.code, el)
+      }
     }
 
     return (
-      <Remote
-        key={n.code}
-        $$path={componentPathMap[n.name]}
-        // 按需注册ref
-        {...refs}
-        // 渲染组件属性
-        {...n.config.property}
-        // 渲染样式属性
-        {...n.config.style}
-        {...renderSlots(n.slots)}
-        // 渲染注册动作，内部会管理各个组件的互相调用关系
-        {...action.render(n.code, n.config.actions, { eventDefinitions: component.config.eventDefinitions })}
-      >
-        {render()}
-      </Remote>
+      <Controller key={n.code} node={n} glide={glide}>
+        <Remote
+          $$path={componentPathMap[n.name]}
+          code={n.code}
+          // 传递到组件的上下文
+          glide={glide.render(n.code, n.config.dependencies)}
+          // 按需注册ref
+          {...refs}
+          // 渲染组件属性
+          {...n.config.property}
+          // 渲染样式属性
+          {...n.config.style}
+          {...renderSlots(n.slots)}
+          // 渲染注册动作，内部会管理各个组件的互相调用关系
+          {...action.render(n.code, n.config.actions, { eventDefinitions: component.config.eventDefinitions })}
+        >
+          {render()}
+        </Remote>
+      </Controller>
     )
   }
 

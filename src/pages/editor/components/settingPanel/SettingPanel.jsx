@@ -1,13 +1,5 @@
 import React from 'react'
-import {
-  ConfigPanel,
-  ActionPanel,
-  BoxPanel,
-  Relationship,
-  useEditor,
-  selectNodeSelector,
-  componentSelector,
-} from '@/packages/editor'
+import { ConfigPanel, ActionPanel, BoxPanel, useEditor, selectNodeSelector, componentSelector } from '@/packages/editor'
 import { Module } from 'remote:glide_components/Module'
 import { Tab, TabPanel } from 'remote:glide_components/Tab'
 
@@ -33,7 +25,8 @@ function SettingPanel() {
   }
 
   function handleActionChange(value) {
-    updateEditorNode({ code: selectNode.code, key: 'actions', value })
+    updateEditorNode({ code: selectNode.code, key: 'actions', value: value?.actions })
+    updateEditorNode({ code: selectNode.code, key: 'dependencies', value: value?.dependencies })
   }
 
   function handleStyleChange(value) {
@@ -54,31 +47,30 @@ function SettingPanel() {
       <Tab className={styles.tab}>
         <TabPanel name="property" title="属性">
           <ConfigPanel
-            initialValues={selectNode?.config}
+            value={selectNode?.config}
             configDefinitions={componentInfoComponentDefinitions}
             onChange={handleInfoChange}
           />
           <ConfigPanel
-            initialValues={selectNode?.config?.property}
+            value={selectNode?.config?.property}
             configDefinitions={selectComponent?.config?.configDefinitions}
             onChange={handleConfigChange}
           />
         </TabPanel>
         <TabPanel name="style" title="样式">
           <ConfigPanel
-            initialValues={selectNode?.config?.style}
+            value={selectNode?.config?.style}
             configDefinitions={selectComponent?.config?.styleDefinitions}
             onChange={handleStyleChange}
           />
-          <BoxPanel initialValues={selectNode?.config?.cssBox} onChange={handleBoxChange} />
+          <BoxPanel value={selectNode?.config?.cssBox} onChange={handleBoxChange} />
         </TabPanel>
         <TabPanel name="data" title="数据">
           数据面板
         </TabPanel>
-        <TabPanel name="action" title="动作">
-          <Relationship />
+        <TabPanel name="action" title="交互">
           <ActionPanel
-            initialValues={selectNode?.config?.actions}
+            value={{ actions: selectNode?.config?.actions, dependencies: selectNode?.config?.dependencies }}
             eventDefinitions={selectComponent?.config?.eventDefinitions}
             onChange={handleActionChange}
           />
