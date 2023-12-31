@@ -1,45 +1,39 @@
 export const configDefinition = [
   {
-    label: '基础组件',
+    title: '基础组件',
     name: 'base',
-    children: [
+    data: [
       {
-        label: '按钮',
-        name: 'Button',
-        url: 'https://gw.alipayobjects.com/zos/rmsportal/ndmJrAzNqTcQcMTojXKw.png',
+        title: 'Button',
+        component: 'button',
+        url: 'http://iph.href.lu/80x80',
       },
       {
-        label: '分割线',
-        name: 'Divider',
-        url: 'https://gw.alipayobjects.com/zos/rmsportal/ndmJrAzNqTcQcMTojXKw.png',
+        title: 'Module',
+        component: 'module',
+        url: 'http://iph.href.lu/80x80',
       },
     ],
   },
   {
-    label: '布局组件',
+    title: '布局组件',
     name: 'layout',
-    children: [
+    data: [
       {
-        label: '行',
-        name: 'Row',
-        url: 'https://gw.alipayobjects.com/zos/rmsportal/ndmJrAzNqTcQcMTojXKw.png',
+        title: 'Row',
+        component: 'row',
+        url: 'http://iph.href.lu/80x80',
       },
       {
-        label: '列',
-        name: 'Col',
-        url: 'https://gw.alipayobjects.com/zos/rmsportal/ndmJrAzNqTcQcMTojXKw.png',
+        title: 'Col',
+        component: 'col',
+        url: 'http://iph.href.lu/80x80',
       },
     ],
   },
   {
-    label: '业务组件',
-    name: 'businessComponent',
-    children: [
-      {
-        label: '基础表格',
-        name: 'BaseTable',
-        url: 'https://gw.alipayobjects.com/zos/rmsportal/ndmJrAzNqTcQcMTojXKw.png',
-      },
-    ],
+    title: '业务组件',
+    name: 'biz',
+    data: [],
   },
 ]

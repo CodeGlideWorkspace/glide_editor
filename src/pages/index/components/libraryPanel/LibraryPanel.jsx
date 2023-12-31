@@ -4,7 +4,7 @@ import ComponentPanel from './ComponentPanel'
 import styles from './LibraryPanel.module.less'
 import { configDefinition } from './config'
 
-function LibraryProvider() {
+function LibraryPanel() {
   return (
     <div>
       <div className={styles.library}>
@@ -15,4 +15,4 @@ function LibraryProvider() {
     </div>
   )
 }
-export default LibraryProvider
+export default LibraryPanel
