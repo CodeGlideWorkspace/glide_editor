@@ -7,16 +7,16 @@ import Size from './Size'
 import styles from './BoxPanel.module.less'
 
 function BoxPanel({ value, onChange }) {
-  function handleChange(key, value) {
-    onChange({ ...value, [key]: value })
+  function handleChange(k, v) {
+    onChange({ ...value, [k]: v })
   }
 
-  function handleWidthChange(value) {
-    onChange({ ...value, width: { ...value.width, value } })
+  function handleWidthChange(v) {
+    onChange({ ...value, width: { ...value.width, value: v } })
   }
 
-  function handleHeightChange(value) {
-    onChange({ ...value, height: { ...value.height, value } })
+  function handleHeightChange(v) {
+    onChange({ ...value, height: { ...value.height, value: v } })
   }
 
   function handleWidthUnitChange(unit) {

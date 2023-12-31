@@ -1,5 +1,6 @@
 import React from 'react'
 import { Remote } from 'remote:glide_components/Remote'
+import { useMount } from 'remote:glide_components/hooks'
 
 import Box from './Box'
 import Controller from './Controller'
@@ -9,6 +10,10 @@ import useGlide from './useGlide'
 function View({ node, scripts, componentMap, componentPathMap }) {
   const action = useAction({ scripts })
   const glide = useGlide({ node })
+
+  useMount(() => {
+    glide.scheduler.publish()
+  })
 
   // 渲染插槽组件
   function renderSlots(slots) {

@@ -57,8 +57,7 @@ function Size({ value, unit, onChange, onUnitChange }) {
 
   return (
     <div className={styles.label} onClick={handleFocus}>
-      {value}
-      {unit || '-'}
+      {[value, unit].filter(Boolean).join('') || '-'}
     </div>
   )
 }
