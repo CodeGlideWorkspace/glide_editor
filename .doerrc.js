@@ -14,7 +14,7 @@ module.exports = {
   // 开启BrowserRouter模式
   browserHistory: false,
 
-  plugins: ['@doerjs/plugin-less'],
+  plugins: ['@doerjs/plugin-less', '@doerjs/plugin-mock'],
 
   // 自定义<Suspense fallback={<Loading />}> loading组件
   // 布局加载和页面加载公用一个loading

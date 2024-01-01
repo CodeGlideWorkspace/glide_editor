@@ -19,11 +19,14 @@
   "devDependencies": {
     "@babel/runtime": "7.23.2",
     "@babel/runtime-corejs3": "7.23.2",
-    "@doerjs/cli": "0.1.12",
+    "@doerjs/cli": "0.1.13",
     "@doerjs/eslint-config": "0.0.9",
     "@doerjs/plugin-less": "0.0.9",
     "@doerjs/prettier-config": "0.0.8",
     "husky": "8.0.3",
     "lint-staged": "15.0.2"
+  },
+  "dependencies": {
+    "@doerjs/plugin-mock": "^0.0.10"
   }
 }
