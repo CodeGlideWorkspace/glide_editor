@@ -1,5 +1,6 @@
 import { useRef } from 'react'
 import { Scheduler, isFunction, isString } from 'remote:glide_components/utils'
+import { useMount } from 'remote:glide_components/hooks'
 
 class GlideCode {
   // 调度器实例
@@ -75,6 +76,10 @@ class GlideCode {
 
 export default function useGlide() {
   const glide = useRef(null)
+
+  useMount(() => {
+    glide.current.scheduler.publish()
+  })
 
   if (!glide.current) {
     glide.current = new GlideCode()

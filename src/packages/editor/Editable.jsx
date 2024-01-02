@@ -1,6 +1,9 @@
 import React, { useState } from 'react'
+import { share } from 'doer'
 import { useMount } from 'remote:glide_components/hooks'
+
 import useEditor from './model/editor'
+import Plugin from './Plugin'
 
 function Editable({ children }) {
   const [status, setStatus] = useState('pending')
@@ -14,6 +17,10 @@ function Editable({ children }) {
   }
 
   useMount(() => {
+    // 共享插件体系，这样对应的业务组件可以通过apply('plugin')获取插件API
+    share('plugin', new Plugin())
+
+    // 启动前置资源加载
     bootstrap()
       .then(() => {
         setStatus('completed')
