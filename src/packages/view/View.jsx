@@ -5,27 +5,28 @@ import Box from './Box'
 import Controller from './Controller'
 import useAction from './useAction'
 import useGlide from './useGlide'
-
-function View({ node, scripts, componentMap, componentPathMap }) {
+function View({ node, scripts, componentMap, componentPathMap, wrapper, empty }) {
   const action = useAction({ scripts })
   const glide = useGlide({ node })
+  const Wrapper = wrapper
+  const Empty = empty
 
   // 渲染插槽组件
-  function renderSlots(slots) {
+  function renderSlots(slots, component) {
     if (!slots) {
       return {}
     }
 
     return Object.keys(slots).reduce((result, slotName) => {
-      result[slotName] = renderChildren(slots[slotName])
+      result[slotName] = renderChildren(slots[slotName], component)
       return result
     }, {})
   }
 
   // 渲染子组件
-  function renderChildren(children) {
+  function renderChildren(children, component) {
     if (!children?.length) {
-      return null
+      return <Empty component={component} />
     }
 
     return <>{children.map((child) => renderNode(child))}</>
@@ -54,7 +55,7 @@ function View({ node, scripts, componentMap, componentPathMap }) {
           {...n.config.property}
           // 渲染样式属性
           {...n.config.style}
-          {...renderSlots(n.slots)}
+          {...renderSlots(n.slots, n)}
           // 渲染注册动作，内部会管理各个组件的互相调用关系
           {...action.render(n.code, n.config.actions, { eventDefinitions: component.config.eventDefinitions })}
         >
@@ -63,7 +64,6 @@ function View({ node, scripts, componentMap, componentPathMap }) {
       </Controller>
     )
   }
-
   // 动态渲染真实组件
   function renderNode(n) {
     if (!n) {
@@ -74,21 +74,24 @@ function View({ node, scripts, componentMap, componentPathMap }) {
     if (!component) {
       return null
     }
-
     // 严格布局模式渲染
     if (component.config.strictMode) {
-      return renderRemote(n, component, () => {
-        return <Box value={n.config.cssBox}>{renderChildren(n.children)}</Box>
-      })
+      return renderRemote(n, component, () => (
+        <Wrapper key={n.code} node={n}>
+          <Box value={n.config.cssBox}>{renderChildren(n.children, component)}</Box>
+        </Wrapper>
+      ))
     }
 
     // 普通模式布局渲染
     return (
-      <Box value={n.config.cssBox}>
-        {renderRemote(n, component, () => {
-          return renderChildren(n.children)
-        })}
-      </Box>
+      <Wrapper key={n.code} node={n}>
+        <Box value={n.config.cssBox}>
+          {renderRemote(n, component, () => {
+            return renderChildren(n.children, component)
+          })}
+        </Box>
+      </Wrapper>
     )
   }
 
@@ -102,6 +105,8 @@ View.defaultProps = {
   scripts: [],
   // 获取的远程组件定义映射表
   componentMap: [],
+  wrapper: ({ children }) => <>{children}</>,
+  empty: () => null,
 }
 
 export default View
