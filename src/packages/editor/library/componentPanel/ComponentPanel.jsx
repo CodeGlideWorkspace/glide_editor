@@ -11,7 +11,7 @@ const renderItem = (item, index) => {
       <div className={styles.itemContent}>
         {item.children.map((child, index) => {
           return (
-            <Draggable key={child.name} item={{ data: child, role: 'library' }}>
+            <Draggable key={child.name} item={{ data: child, role: 'library', droppable: false }}>
               <div key={index} className={styles.itemContentItem}>
                 <img src={child.icon} alt="" />
                 <span>{child.title}</span>

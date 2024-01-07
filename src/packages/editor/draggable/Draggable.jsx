@@ -20,9 +20,6 @@ export default function DraggableComponent({ item = {}, children }) {
   const canDrop = (source, target) => {
     const targetComponent = componentSelector(target.data.name)(useEditor.getState())
     const sourceComponent = componentSelector(source.data.name)(useEditor.getState())
-
-    console.log('canDrop', target.data.name, source.data.name)
-
     // TODO 默认逻辑 layout 不能放组件内
     let result = true
     if (isFunction(sourceComponent?.allowDropIn)) {
@@ -41,7 +38,7 @@ export default function DraggableComponent({ item = {}, children }) {
   const handleDrop = (source = {}, target, state, monitor) => {
     const { role, data: { name } = {} } = source
     if (roleEnum.LIB === role) {
-      // console.log('handleDrop.library', source, target, state, monitor)
+      console.log('handleDrop.library', source, target, state, monitor)
       // 新加
       appendEditorNode({ node: createEditorNode(name), parentCode: target.data.code })
     } else if (roleEnum.VIEW === role) {
@@ -50,6 +47,17 @@ export default function DraggableComponent({ item = {}, children }) {
       // appendEditorNode({ node: createEditorNode(name) })
     }
   }
+  const { droppable = true } = item
+
+  if (!droppable) {
+    // 仅drag
+    return (
+      <Draggable item={item} canDrag={canDrag} onDrag={handleDrag}>
+        {children}
+      </Draggable>
+    )
+  }
+
   return (
     <Draggable item={item} canDrag={canDrag} onDrag={handleDrag}>
       <Droppable item={item} canDrop={canDrop} onDrop={handleDrop}>
