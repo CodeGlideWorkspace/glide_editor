@@ -61,6 +61,16 @@ function loadItems(payload, operator) {
 async function loadComponents(payload, operator) {
   const componentPaths = [
     {
+      name: 'Col',
+      path: 'remote:glide_public_components/Col',
+      exportName: 'default',
+    },
+    {
+      name: 'Row',
+      path: 'remote:glide_public_components/Row',
+      exportName: 'default',
+    },
+    {
       name: '$$Page',
       path: 'remote:glide_public_components/Page',
       exportName: 'default',

@@ -77,3 +77,36 @@ export function componentMapSelector(state) {
     return result
   }, {})
 }
+
+/** */
+export function componentOptionsSelector() {
+  return [
+    {
+      title: '布局',
+      name: 'layout',
+      children: [
+        {
+          title: '行',
+          name: 'Row',
+          icon: 'https://dummyimage.com/80x80/000/fff.png',
+        },
+        {
+          title: '列',
+          name: 'Col',
+          icon: 'https://dummyimage.com/80x80/000/fff.png',
+        },
+      ],
+    },
+    {
+      title: '业务组件',
+      name: 'businessComponent',
+      children: [
+        {
+          title: '基础表格',
+          name: 'BizTable',
+          icon: 'https://dummyimage.com/80x80/000/fff.png',
+        },
+      ],
+    },
+  ]
+}
