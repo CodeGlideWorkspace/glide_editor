@@ -8,7 +8,19 @@ module.exports = {
   extraBabelCompileNodeModules: [],
 
   // 项目导出的共享资源
-  exposes: {},
+  exposes: {
+    './core': './src/packages/core/index.js',
+    './Plugin': './src/packages/plugin/index.js',
+    './Setting': './src/packages/setting/index.js',
+    './Render': './src/packages/render/index.js',
+    './MaterialPlugin': './src/packages/materialPlugin/index.js',
+    './OutlinePlugin': './src/packages/outlinePlugin/index.js',
+    './SchemaPlugin': './src/packages/schemaPlugin/index.js',
+    './PropPanel': './src/packages/propPanel/index.js',
+    './StylePanel': './src/packages/stylePanel/index.js',
+    './ActionPanel': './src/packages/actionPanel/index.js',
+    './Toolbar': './src/packages/toolbar/index.js',
+  },
   shared: {},
 
   // 开启BrowserRouter模式

@@ -6,6 +6,7 @@
  */
 export function remotes() {
   return {
+    glide_editor: 'http://localhost:3000',
     glide_components: 'http://localhost:3001',
     glide_public_components: 'http://localhost:3002',
   }
