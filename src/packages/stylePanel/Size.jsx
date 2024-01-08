@@ -37,7 +37,12 @@ function Size({ value, showUnit, onChange }) {
   }
 
   function handleChange(value) {
-    onChange(`${value}${unit}`)
+    if (value) {
+      onChange(`${value}${unit}`)
+      return
+    }
+
+    onChange('')
   }
 
   if (active) {

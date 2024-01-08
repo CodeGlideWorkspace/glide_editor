@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { Layout, Content, Sider } from 'remote:glide_components/Layout'
 import { Remote } from 'remote:glide_components/Remote'
-import { useEditor, resourcesSelector } from 'remote:glide_editor/core'
+import { useEditor, resourcesSelectorByType } from 'remote:glide_editor/core'
 import { classNames } from 'remote:glide_components/utils'
 import { QuestionCircleOutlined } from 'remote:glide_components/Icon'
 
@@ -10,7 +10,7 @@ import styles from './Plugin.module.less'
 function Plugin({ collapsed }) {
   const [name, setName] = useState()
   const timer = useRef(null)
-  const plugins = useEditor(resourcesSelector('plugin'))
+  const plugins = useEditor(resourcesSelectorByType('plugin'))
 
   // 当前高亮的名字
   const currentName = name || plugins[0]?.name

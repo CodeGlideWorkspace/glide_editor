@@ -1,4 +1,11 @@
-import { uuid } from 'remote:glide_components/utils'
+/**
+ * 编辑器Schema相关API
+ *
+ * @link https://zh794p7mtp.feishu.cn/wiki/Qc1kwjP4IifUzNklKEKcH5MTnWc
+ *
+ */
+
+import { uuid, isArray } from 'remote:glide_components/utils'
 import { nodeSelector, findParentNode } from '../selector/document'
 
 /**
@@ -73,7 +80,7 @@ function selectNode(code, operator) {
  */
 function unselectNode(_, operator) {
   operator.set((state) => {
-    state.selectNodeCode = undefined
+    state.selectNodeCode = null
   })
 }
 
@@ -99,7 +106,7 @@ function updateNode(payload, operator) {
 }
 
 /**
- * 尾部添加节点
+ * 追加节点到尾部
  *
  * @param {Node} payload.node 节点信息
  * @param {?String} payload.slotName 可选，插槽名字，不传则放置于子节点
@@ -112,6 +119,9 @@ function appendNode(payload, operator) {
   operator.set((state) => {
     const parentNode = nodeSelector(parentCode)(state) || state.node
     if (!slotName) {
+      if (!isArray(parentNode.children)) {
+        parentNode.children = []
+      }
       parentNode.children.push(node)
       return
     }
@@ -124,7 +134,7 @@ function appendNode(payload, operator) {
 }
 
 /**
- * 首部添加节点
+ * 追加节点到头部
  *
  * @param {Node} payload.node 节点信息
  * @param {?String} payload.slotName 可选，插槽名字，不传则放置于子节点
@@ -137,6 +147,9 @@ function prependNode(payload, operator) {
   operator.set((state) => {
     const parentNode = nodeSelector(parentCode)(state) || state.node
     if (!slotName) {
+      if (!isArray(parentNode.children)) {
+        parentNode.children = []
+      }
       parentNode.children.unshift(node)
       return
     }
@@ -148,7 +161,7 @@ function prependNode(payload, operator) {
 }
 
 /**
- * 插入节点
+ * 追加节点到指定位置
  *
  * @param {Node} payload.node 节点信息
  * @param {?String} payload.slotName 可选，插槽名字，不传则放置于子节点
@@ -157,11 +170,14 @@ function prependNode(payload, operator) {
  *
  * @returns {void}
  */
-function insertNode(payload, operator) {
+function appendNodeTo(payload, operator) {
   const { node, parentCode, slotName, index } = payload
   operator.set((state) => {
     const parentNode = nodeSelector(parentCode)(state) || state.node
     if (!slotName) {
+      if (!isArray(parentNode.children)) {
+        parentNode.children = []
+      }
       parentNode.children.splice(index, 0, node)
       return
     }
@@ -181,7 +197,7 @@ function insertNode(payload, operator) {
  */
 function removeNode(code, operator) {
   operator.set((state) => {
-    const { node: parentNode, slotName } = findParentNode(state.node, code) || {}
+    const { node: parentNode, slotName } = findParentNode(state.node, code)
     if (!parentNode) {
       return
     }
@@ -190,10 +206,6 @@ function removeNode(code, operator) {
       const index = parentNode.children.findIndex((child) => child.code === code)
       parentNode.children.splice(index, 1)
       return
-    }
-
-    if (!parentNode.slots[slotName]) {
-      parentNode.slots[slotName] = []
     }
 
     const slotIndex = parentNode.slots[slotName].findIndex((child) => child.code === code)
@@ -210,7 +222,7 @@ function removeNode(code, operator) {
  */
 function replaceNode(node, operator) {
   operator.set((state) => {
-    const { node: parentNode, slotName } = findParentNode(state.node, node.code) || {}
+    const { node: parentNode, slotName } = findParentNode(state.node, node.code)
     if (!parentNode) {
       return
     }
@@ -221,13 +233,67 @@ function replaceNode(node, operator) {
       return
     }
 
-    if (!parentNode.slots[slotName]) {
-      parentNode.slots[slotName] = []
-    }
-
     const slotIndex = parentNode.slots[slotName].findIndex((child) => child.id === node.id)
     parentNode.slots[slotName].splice(slotIndex, 1, node)
   })
+}
+
+/**
+ * 插入到相邻节点
+ *
+ * @param {String} payload.node 节点信息
+ * @param {String} payload.targetCode 目标节点code
+ * @param {String} payload.direction 方向 before | after
+ */
+function insertNode(payload, operator) {
+  const { node, targetCode, direction } = payload
+  const state = operator.get()
+  const { node: parentNode, slotName } = findParentNode(state.node, targetCode)
+  if (!parentNode) {
+    return
+  }
+
+  if (!slotName) {
+    const index = parentNode.children.findIndex((child) => child.code === targetCode)
+    state.appendNodeTo({
+      node,
+      parentCode: parentNode.code,
+      index: direction === 'before' ? index : index + 1,
+    })
+    return
+  }
+
+  const slotIndex = parentNode.slots[slotName].findIndex((child) => child.code === targetCode)
+  state.appendNodeTo({
+    node,
+    parentCode: parentNode.code,
+    slotName,
+    index: direction === 'before' ? slotIndex : slotIndex + 1,
+  })
+}
+
+/**
+ * 插入到目标节点之前
+ *
+ * @param {String} payload.node 节点信息
+ * @param {String} payload.targetCode 目标节点code
+ */
+function insertNodeBefore(payload, operator) {
+  const { node, targetCode } = payload
+  const state = operator.get()
+  state.insertNode({ node, targetCode, direction: 'before' })
+}
+
+/**
+ * 插入到目标节点之后
+ *
+ * @param {String} payload.node 节点信息
+ * @param {String} payload.targetCode 目标节点code
+ */
+function insertNodeAfter(payload, operator) {
+  const { node, targetCode } = payload
+  const state = operator.get()
+  state.insertNode({ node, targetCode, direction: 'before' })
 }
 
 /**
@@ -243,30 +309,53 @@ function moveNode(payload, operator) {
   const { code, targetCode, direction } = payload
   const state = operator.get()
   const moveNode = nodeSelector(code)(state)
-  const { node: parentNode, slotName } = findParentNode(state.node, targetCode) || {}
+  state.removeNode(code)
+  const { node: parentNode, slotName } = findParentNode(state.node, targetCode)
   if (!parentNode) {
     return
   }
 
   if (!slotName) {
     const index = parentNode.children.findIndex((child) => child.code === targetCode)
-    state.removeNode(code)
-    state.insertNode({ node: moveNode, parentCode: parentNode.code, index: direction === 'before' ? index : index + 1 })
+    state.appendNodeTo({
+      node: moveNode,
+      parentCode: parentNode.code,
+      index: direction === 'before' ? index : index + 1,
+    })
     return
   }
 
-  if (!parentNode.slots[slotName]) {
-    parentNode.slots[slotName] = []
-  }
-
   const slotIndex = parentNode.slots[slotName].findIndex((child) => child.code === targetCode)
-  state.removeNode(code)
-  state.insertNode({
+  state.appendNodeTo({
     node: moveNode,
     parentCode: parentNode.code,
     slotName,
     index: direction === 'before' ? slotIndex : slotIndex + 1,
   })
+}
+
+/**
+ * 移动节点到目标节点之前
+ *
+ * @param {String} payload.code 移动的节点code
+ * @param {String} payload.targetCode 移动到的目标节点code
+ */
+function moveNodeBefore(payload, operator) {
+  const { code, targetCode } = payload
+  const state = operator.get()
+  state.moveNode({ code, targetCode, direction: 'before' })
+}
+
+/**
+ * 移动节点到目标节点之后
+ *
+ * @param {String} payload.code 移动的节点code
+ * @param {String} payload.targetCode 移动到的目标节点code
+ */
+function moveNodeAfter(payload, operator) {
+  const { code, targetCode } = payload
+  const state = operator.get()
+  state.moveNode({ code, targetCode, direction: 'after' })
 }
 
 function document(actionCreator) {
@@ -283,9 +372,14 @@ function document(actionCreator) {
     updateNode: actionCreator(updateNode),
     appendNode: actionCreator(appendNode),
     prependNode: actionCreator(prependNode),
+    appendNodeTo: actionCreator(appendNodeTo),
     insertNode: actionCreator(insertNode),
+    insertNodeBefore: actionCreator(insertNodeBefore),
+    insertNodeAfter: actionCreator(insertNodeAfter),
     removeNode: actionCreator(removeNode),
     moveNode: actionCreator(moveNode),
+    moveNodeBefore: actionCreator(moveNodeBefore),
+    moveNodeAfter: actionCreator(moveNodeAfter),
   }
 }
 

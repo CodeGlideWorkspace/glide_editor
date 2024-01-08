@@ -32,11 +32,11 @@ function Actions({ name: actionsName, node }) {
 
   // 获取可配置的事件名称
   function getEventOptions(excludeEventMap) {
-    if (!nodeDefinition?.config?.eventDefinitions) {
+    if (!nodeDefinition?.module?.config?.eventDefinitions) {
       return []
     }
 
-    return nodeDefinition.config.eventDefinitions.reduce((result, item) => {
+    return nodeDefinition.module.config.eventDefinitions.reduce((result, item) => {
       if (excludeEventMap[item.name]) {
         return result
       }

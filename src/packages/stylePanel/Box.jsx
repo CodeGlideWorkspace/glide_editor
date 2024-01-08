@@ -6,10 +6,22 @@ import Size from './Size'
 import styles from './Box.module.less'
 
 function Box({ value, title, className, children, onChange }) {
+  const valueRect = value.split(' ').filter(Boolean)
+  const top = valueRect[0]
+  const right = valueRect[1]
+  const bottom = valueRect[2] ? valueRect[2] : top
+  const left = valueRect[3] ? valueRect[3] : right
+
   function handleChange(size, index) {
-    const newValue = value.slice()
-    newValue[index] = size
-    onChange(newValue)
+    const newValue = Array.from({ length: 4 }).map((_, index) => {
+      return valueRect[index] || '0'
+    })
+    if (size) {
+      newValue[index] = size
+    } else {
+      newValue[index] = '0'
+    }
+    onChange(newValue.join(' '))
   }
 
   return (
@@ -23,23 +35,23 @@ function Box({ value, title, className, children, onChange }) {
         <tr>
           <td className={styles.title}>{title}</td>
           <td className={styles.size}>
-            <Size value={value[0]} onChange={(size) => handleChange(size, 0)} />
+            <Size value={top} onChange={(size) => handleChange(size, 0)} />
           </td>
           <td></td>
         </tr>
         <tr>
           <td className={styles.size}>
-            <Size value={value[3]} onChange={(size) => handleChange(size, 3)} />
+            <Size value={left} onChange={(size) => handleChange(size, 3)} />
           </td>
           <td>{children}</td>
           <td className={styles.size}>
-            <Size value={value[1]} onChange={(size) => handleChange(size, 1)} />
+            <Size value={right} onChange={(size) => handleChange(size, 1)} />
           </td>
         </tr>
         <tr>
           <td></td>
           <td className={styles.size}>
-            <Size value={value[2]} onChange={(size) => handleChange(size, 2)} />
+            <Size value={bottom} onChange={(size) => handleChange(size, 2)} />
           </td>
           <td></td>
         </tr>
@@ -49,7 +61,7 @@ function Box({ value, title, className, children, onChange }) {
 }
 
 Box.defaultProps = {
-  value: [],
+  value: '',
   onChange() {},
 }
 

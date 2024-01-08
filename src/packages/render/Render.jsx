@@ -46,7 +46,7 @@ function Render({ node, configs, materials, renderContainer, renderProps, render
         $$path={{ path: material.path, exportName: material.exportName }}
         code={n.code}
         {...n.props}
-        {...renderProps(n)}
+        {...renderProps({ node: n, config })}
         {...renderSlots(n.slots)}
       >
         {children}

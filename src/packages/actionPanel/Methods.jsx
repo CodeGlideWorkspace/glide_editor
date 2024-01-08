@@ -6,7 +6,7 @@ import {
   useEditor,
   nodeSelector,
   nodesSelector,
-  resourcesSelector,
+  resourcesSelectorByScope,
   resourceDefinitionSelector,
 } from 'remote:glide_editor/core'
 
@@ -14,7 +14,7 @@ import styles from './Methods.module.less'
 
 function Methods({ parentName, name: listName }) {
   const nodes = useEditor(nodesSelector)
-  const scripts = useEditor(resourcesSelector('paramAdapter'))
+  const scripts = useEditor(resourcesSelectorByScope({ type: 'script', scope: 'adapter' }))
 
   const nextParentName = [...parentName, ...listName]
 
@@ -56,8 +56,8 @@ function Methods({ parentName, name: listName }) {
                         const selectNodeDefinition = resourceDefinitionSelector(selectNode?.name)(state)
 
                         let apiOptions = []
-                        if (selectNodeDefinition?.config?.apiDefinitions) {
-                          apiOptions = selectNodeDefinition.config.apiDefinitions.map((item) => {
+                        if (selectNodeDefinition?.module?.config?.apiDefinitions) {
+                          apiOptions = selectNodeDefinition.module.config.apiDefinitions.map((item) => {
                             return { label: item.title, value: item.name }
                           })
                         }

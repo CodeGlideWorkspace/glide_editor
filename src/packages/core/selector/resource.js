@@ -1,13 +1,41 @@
 /**
- * 获取资源图谱
+ * 获取资源
+ *
+ * @param {String} name 资源名字
+ *
+ * @returns Resource | undefined
+ */
+export function resourceSelector(name) {
+  return function (state) {
+    return state.resources.find((resource) => resource.name === name)
+  }
+}
+
+/**
+ * 获取指定类型的资源列表，不包含域下资源
  *
  * @param {String} type 资源类型
  *
- * @returns Object<{ name: resource }>
+ * @returns {Resource[]}
  */
-export function resourcesSelector(type) {
+export function resourcesSelectorByType(type) {
   return function (state) {
-    return state.resources.filter((resource) => resource.type === type)
+    return state.resources.filter((resource) => resource.type === type && !resource.scope)
+  }
+}
+
+/**
+ * 获取指定域的资源列表
+ *
+ * @param {String} payload.type 资源类型
+ * @param {String} payload.scope 资源域
+ *
+ * @returns {Resource[]}
+ */
+export function resourcesSelectorByScope(payload) {
+  const { type, scope } = payload
+  return function (state) {
+    return state.resources.filter((resource) => resource.type === type && resource.scope === scope)
   }
 }
 
@@ -16,28 +44,39 @@ export function resourcesSelector(type) {
  *
  * @param {String} name 资源名称
  *
- * @returns ResourceDefinition
+ * @returns ResourceDefinition | undefined
  */
 export function resourceDefinitionSelector(name) {
   return function (state) {
-    const resourceDefinition = state.resourceDefinitions.find((resourceDefinition) => resourceDefinition.name === name)
-    if (resourceDefinition) {
-      return resourceDefinition.module
-    }
+    return state.resourceDefinitions.find((resourceDefinition) => resourceDefinition.name === name)
   }
 }
 
 /**
- * 获取一个种类的资源定义
+ * 获取指定类型的资源定义
  *
  * @param {String} type 资源类型
  *
- * @returns {Array<ResourceDefinition>}
+ * @returns {ResourceDefinition[]}
  */
-export function resourceDefinitionsSelector(type) {
+export function resourceDefinitionsSelectorByType(type) {
   return function (state) {
-    return state.resourceDefinitions
-      .filter((resourceDefinition) => resourceDefinition.type === type)
-      .map((resourceDefinition) => resourceDefinition.module)
+    return state.resourceDefinitions.filter((resourceDefinition) => resourceDefinition.type === type)
+  }
+}
+
+/**
+ * 获取指定域的资源定义
+ *
+ * @param {String} payload.type 资源类型
+ * @param {String} payload.scope 资源域
+ *
+ * @returns {ResourceDefinition[]}
+ */
+export function resourceDefinitionsSelectorByScope(payload) {
+  return function (state) {
+    return state.resourceDefinitions.filter(
+      (resourceDefinition) => resourceDefinition.type === payload.type && resourceDefinition.scope === payload.scope,
+    )
   }
 }

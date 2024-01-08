@@ -3,7 +3,14 @@ import { share } from 'doer'
 import useEditor from './store/editor'
 
 import { nodeSelector, parentNodeSelector, selectNodeSelector, nodesSelector } from './selector/document'
-import { resourcesSelector, resourceDefinitionSelector, resourceDefinitionsSelector } from './selector/resource'
+import {
+  resourceSelector,
+  resourcesSelectorByType,
+  resourcesSelectorByScope,
+  resourceDefinitionSelector,
+  resourceDefinitionsSelectorByType,
+  resourceDefinitionsSelectorByScope,
+} from './selector/resource'
 
 export {
   useEditor,
@@ -11,9 +18,12 @@ export {
   nodeSelector,
   parentNodeSelector,
   selectNodeSelector,
-  resourcesSelector,
+  resourceSelector,
+  resourcesSelectorByType,
+  resourcesSelectorByScope,
   resourceDefinitionSelector,
-  resourceDefinitionsSelector,
+  resourceDefinitionsSelectorByType,
+  resourceDefinitionsSelectorByScope,
 }
 
 share('editor', {
@@ -22,7 +32,10 @@ share('editor', {
   nodesSelector,
   parentNodeSelector,
   selectNodeSelector,
-  resourcesSelector,
+  resourceSelector,
+  resourcesSelectorByType,
+  resourcesSelectorByScope,
   resourceDefinitionSelector,
-  resourceDefinitionsSelector,
+  resourceDefinitionsSelectorByType,
+  resourceDefinitionsSelectorByScope,
 })

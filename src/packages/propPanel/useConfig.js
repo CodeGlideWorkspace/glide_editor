@@ -11,13 +11,13 @@ function useConfig(node) {
     return isArray(item.children) && !item.node
   }
 
-  nodeDefinition?.config?.propDefinitions?.forEach((item) => {
+  nodeDefinition?.module?.config?.propDefinitions?.forEach((item) => {
     if (isGroup(item)) {
       groupDefinitions.push(item)
     }
   })
 
-  const itemDefinitions = nodeDefinition?.config?.propDefinitions?.filter((item) => {
+  const itemDefinitions = nodeDefinition?.module?.config?.propDefinitions?.filter((item) => {
     return !isGroup(item)
   })
   if (itemDefinitions && itemDefinitions.length) {
@@ -27,7 +27,7 @@ function useConfig(node) {
   const props = node?.props || {}
   // 获取当前配置值
   const values = reduceTrees(
-    nodeDefinition?.config?.propDefinitions,
+    nodeDefinition?.module?.config?.propDefinitions,
     (result, item) => {
       if (isGroup(item)) {
         return result

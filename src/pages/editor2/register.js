@@ -70,9 +70,10 @@ editor.registerResources(
   })),
 )
 
-// 注册参数转换脚本
+// 注册适配器脚本
 editor.registerResource({
-  type: 'paramAdapter',
+  type: 'script',
+  scope: 'adapter',
   name: 'script1',
   title: '多参数转换单参数脚本',
   data: {
@@ -82,4 +83,4 @@ editor.registerResource({
 })
 
 // 加载物料定义
-editor.loadResource('material')
+editor.loadResourceByType('material')

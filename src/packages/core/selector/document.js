@@ -4,8 +4,8 @@ export function findParentNode(node, code) {
   let matchedSlotName
   const matchedNode = findTree(node, (n) => {
     // 在插槽中查找子节点
-    const isMatched = Object.keys(n.slots).some((slotName) => {
-      const isExist = n.slots[slotName].some((child) => child.code === code)
+    const isMatched = Object.keys(n.slots || {}).some((slotName) => {
+      const isExist = n.slots[slotName]?.some((child) => child.code === code)
       if (isExist) {
         matchedSlotName = slotName
       }
@@ -13,11 +13,11 @@ export function findParentNode(node, code) {
     })
 
     // 在插槽中未找到，则到子节点中查找
-    return isMatched || n.children.some((child) => child.code === code)
+    return isMatched || n.children?.some((child) => child.code === code)
   })
 
   if (!matchedNode) {
-    return
+    return {}
   }
 
   return { node: matchedNode, slotName: matchedSlotName }
@@ -45,7 +45,7 @@ export function nodeSelector(code) {
  */
 export function parentNodeSelector(code) {
   return function (state) {
-    const { node } = findParentNode(state.node, code) || {}
+    const { node } = findParentNode(state.node, code)
     return node
   }
 }

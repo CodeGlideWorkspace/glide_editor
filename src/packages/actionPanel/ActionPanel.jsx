@@ -26,9 +26,11 @@ function ActionPanel({ node }) {
     })
   }
 
-  const nodeOptions = nodes.map((node) => {
-    return { label: node.ref, value: node.code }
-  })
+  const nodeOptions = nodes
+    .filter((n) => n.code !== node.code && !n.config?.dependencies?.includes(node.code))
+    .map((n) => {
+      return { label: n.ref, value: n.code }
+    })
 
   return (
     <Form

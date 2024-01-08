@@ -2,13 +2,13 @@ import React, { useContext, useState } from 'react'
 import { FormItem } from 'remote:glide_components/Form'
 import { Remote } from 'remote:glide_components/Remote'
 import { isFunction } from 'remote:glide_components/utils'
-import { useEditor, resourcesSelector } from 'remote:glide_editor/core'
+import { useEditor, resourcesSelectorByType } from 'remote:glide_editor/core'
 
 import { SchedulerContext } from './useScheduler'
 import LifeCycle from './LifeCycle'
 
 function Item({ itemDefinition }) {
-  const setters = useEditor(resourcesSelector('setter'))
+  const setters = useEditor(resourcesSelectorByType('setter'))
   const setterMap = setters.reduce((result, setter) => {
     result[setter.name] = { path: setter.path, exportName: setter.exportName }
     return result
